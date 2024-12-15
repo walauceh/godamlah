@@ -1,9 +1,10 @@
 "use client";
 
+import ChatbotPage from "./Chatbotpage"; // Ensure the file name and import match
 import { useState } from "react";
 import { addMetadata, grantAccess, hasAccess } from "../utils/blockchain";
 
-export default function Home() {
+export default function Chatbot() {
   const [ipfsHash, setIpfsHash] = useState("");
   const [userAddress, setUserAddress] = useState("");
   const [metadataId, setMetadataId] = useState(0);
@@ -40,55 +41,6 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <h1>Metadata Access Control</h1>
-      <div>
-        <h2>Add Metadata</h2>
-        <input
-          type="text"
-          placeholder="IPFS Hash"
-          value={ipfsHash}
-          onChange={(e) => setIpfsHash(e.target.value)}
-        />
-        <button onClick={handleAddMetadata}>Add Metadata</button>
-      </div>
-
-      <div>
-        <h2>Grant Access</h2>
-        <input
-          type="number"
-          placeholder="Metadata ID"
-          value={metadataId}
-          onChange={(e) => setMetadataId(Number(e.target.value))}
-        />
-        <input
-          type="text"
-          placeholder="User Address"
-          value={userAddress}
-          onChange={(e) => setUserAddress(e.target.value)}
-        />
-        <button onClick={handleGrantAccess}>Grant Access</button>
-      </div>
-
-      <div>
-        <h2>Check Access</h2>
-        <input
-          type="number"
-          placeholder="Metadata ID"
-          value={metadataId}
-          onChange={(e) => setMetadataId(Number(e.target.value))}
-        />
-        <input
-          type="text"
-          placeholder="User Address"
-          value={userAddress}
-          onChange={(e) => setUserAddress(e.target.value)}
-        />
-        <button onClick={handleCheckAccess}>Check Access</button>
-        {accessCheck !== null && (
-          <p>Access: {accessCheck ? "Granted" : "Denied"}</p>
-        )}
-      </div>
-    </div>
+    <ChatbotPage /> // Use uppercase for the component
   );
 }

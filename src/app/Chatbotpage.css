@@ -1,0 +1,510 @@
+/* Import FontAwesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* General Chat App Styling */
+.chat-app {
+  display: flex;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  position: relative;
+  width: 240px;
+  background-color: #1a1a1a;
+  border-right: 1px solid #333;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.app-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4518f7;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+.sidebar-account {
+  position: relative;
+  margin-top: auto;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  padding: 10px 0px;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  border-top: 1px solid #333;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.sidebar-nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-item {
+  margin-bottom: 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.sidebar-link:hover {
+  background-color: #333;
+}
+
+.sidebar-link .icon {
+  margin-right: 10px;
+}
+
+.sidebar-link .count {
+  margin-left: auto;
+  background-color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Inbox and Chat Container */
+.inbox-and-chat-container {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  height: 100vh;
+  margin-left: 30px;
+}
+
+/* Content Section */
+.content-section {
+  flex: 2;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.inbox-controls .btn {
+  margin-left: 10px;
+}
+
+.btn {
+  background-color: #4d4d4d;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary {
+  background-color: #0077b6;
+}
+
+.btn-primary:hover {
+  background-color: #005c8b;
+}
+
+.btn-secondary {
+  background-color: #4d4d4d;
+}
+
+.btn-secondary:hover {
+  background-color: #3d3d3d;
+}
+
+.inbox-list {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.inbox-item {
+  background-color: #222;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.inbox-item-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.inbox-item-from {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.inbox-item-subject {
+  flex: 1;
+}
+
+.inbox-item-date {
+  color: #666;
+}
+
+.inbox-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.inbox-item-tag {
+  background-color: #4d4d4d;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.inbox-item-body {
+  line-height: 1.5;
+}
+
+/* Chat Container */
+.chat-container {
+  flex: 1;
+  max-width: 800px;
+  min-width: 800px;
+  padding: 20px;
+  border-left: 1px solid #333;
+  box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  background-color: #222;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  max-width: 60%;
+  padding: 12px 16px;
+  border-radius: 16px;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #0077b6;
+  color: #fff;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background-color: #4d4d4d;
+  color: #fff;
+}
+
+.instructions {
+  text-align: center;
+  color: lightgray;
+  margin-top: 1%;
+}
+
+.instructions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.instructions li {
+  margin: 5px 0;
+}
+
+/* Buttons Section */
+.buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.action-button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #555;
+}
+
+/* Input Area */
+.input-container {
+  display: flex;
+  align-items: center;
+  background-color: #222;
+  padding: 12px 20px;
+  border-top: 1px solid #333;
+}
+
+.Textarea {
+  flex-grow: 1;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  resize: none;
+}
+
+.Textarea::placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+/* Account Dropdown */
+.account-info {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.email {
+  font-size: 14px;
+  color: #aaa;
+  margin: 0;
+}
+
+.chevron {
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+/* General styling for dropdown */
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 5px); /* Align just below the profile */
+  left: 0; /* Ensure it aligns with the profile */
+  width: 250px;
+  background-color: #222;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Align profile pictures */
+.avatar-large, .avatar {
+  width: 50px; /* Same size for all profile pictures */
+  height: 50px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 10px;
+}
+
+/* Dropdown header styling */
+.account-dropdown .account-header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.account-dropdown .avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+}
+
+.account-dropdown .account-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dropdown options */
+.account-dropdown .account-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.account-dropdown .account-options li {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #aaa;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.account-dropdown .account-options li:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.account-dropdown .icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* Adjust dropdown position */
+.account-dropdown-wrapper {
+  position: absolute;
+  top: 50%; /* Adjust to align properly */
+  left: 100%; /* Position to the right of the sidebar */
+  transform: translateY(-50%); /* Center vertically */
+}
+
+
+.account-header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+}
+
+.account-options li {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #aaa;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.account-options li:hover {
+  color: #fff;
+}
+
+.account-options .icon {
+  margin-right: 10px;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 3px;
+  margin-left: 3px;
+  height: 20px;
+}
+
+.typing-indicator .dot {
+  width: 6px;
+  height: 6px;
+  background-color: #888;
+  border-radius: 50%;
+  animation: dot-jump 1.2s infinite ease-in-out;
+}
+
+.typing-indicator .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-jump {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
