@@ -240,17 +240,15 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
   );
 };
 
-
-
 export default function ChatBotPage() {
   const [messages, setMessages] = useState<{ sender: "user" | "bot"; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [selectedSection, setSelectedSection] = useState("Inbox");
   const [isTyping, setIsTyping] = useState(false);
   const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
+  const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
-    // Replace "YOUR_API_KEY" with your actual API key
     const ai = new GoogleGenerativeAI("AIzaSyBQ0DmKwRiXdOG9nfzMzcNbhSV0l99_7ik");
     setGenAI(ai);
   }, []);
@@ -281,24 +279,42 @@ export default function ChatBotPage() {
 
   const getBotResponse = async (message: string): Promise<string> => {
     if (!genAI) return "Loading...";
-  
+
     try {
-      // Define your model
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-  
-      // Create a prompt using the provided message
       const result = await model.generateContent(message);
-  
-      // Extract the response text safely
       const response = result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
-  
       return response || "I'm sorry, I don't understand.";
     } catch (error) {
       console.error("Error generating response:", error);
       return "Something went wrong. Please try again.";
     }
   };
-  
+
+  const handleVoiceInput = () => {
+    const recognition = new (window.SpeechRecognition || (window as any).webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+    };
+
+    recognition.start();
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -310,17 +326,15 @@ export default function ChatBotPage() {
   return (
     <div className="chat-app">
       <Sidebar onSelect={(section) => setSelectedSection(section)} />
-
       <div className="inbox-and-chat-container">
         <ContentSection section={selectedSection} />
-
         <div className="chat-container">
           <header className="chat-header">What can I help with?</header>
           <div className="messages">
             {messages.length === 0 ? (
               <div className="instructions">
                 <p>Welcome to I-Send!</p>
-                <p>Here’s how you can use this chatbot:</p>
+                <p>Here's how you can use this chatbot:</p>
                 <ul>
                   <li>Type <b>hello</b> to start the conversation.</li>
                   <li>Ask for <b>help</b> to get assistance.</li>
@@ -349,7 +363,11 @@ export default function ChatBotPage() {
             <button className="action-button">Add Metadata</button>
             <button className="action-button">Grant Access</button>
             <button className="action-button">Check Access</button>
+            <button className="action-button" onClick={handleVoiceInput}>
+              {isListening ? "Listening..." : "🎙️ Voice Input"}
+            </button>
           </div>
+
           <div className="input-container">
             <textarea
               value={input}
@@ -358,6 +376,7 @@ export default function ChatBotPage() {
               placeholder="Message I-Send"
               className="Textarea"
             />
+            <button onClick={handleSend} className="send-button">Send</button>
           </div>
         </div>
       </div>
