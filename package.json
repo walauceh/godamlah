@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@shadcn/ui": "^0.0.4",
     "@web3-storage/w3cli": "^7.9.1",
     "class-variance-authority": "^0.7.1",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@metamask/providers": "^18.2.0",
     "@types/node": "^20.17.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",

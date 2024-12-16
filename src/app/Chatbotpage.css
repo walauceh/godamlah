@@ -1,6 +1,19 @@
 /* Import FontAwesome */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
+
+.main-container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-container, .sidebar {
+  overflow: visible; /* Prevent content from being clipped */
+  position: relative; /* Ensures proper positioning for absolute children */
+}
+
+
+
 /* General Chat App Styling */
 .chat-app {
   display: flex;
@@ -18,6 +31,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
 .sidebar-header {
@@ -74,6 +88,10 @@
   padding: 0;
 }
 
+.sidebar-nav {
+  flex-grow: 1; /* Allow the nav to grow and push the account section to the bottom */
+}
+
 .sidebar-item {
   margin-bottom: 10px;
 }
@@ -115,15 +133,135 @@
   margin-left: 30px;
 }
 
+
+
 /* Content Section */
 .content-section {
-  flex: 2;
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  overflow: hidden;
-  box-sizing: border-box;
+  width: 350px;
+  max-height: 600px;
+  background-color: #121212;
+  color: #fff;
+  padding: 10px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Inbox Content */
+.inbox-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-item {
+  background-color: #1f1f1f;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.sender {
+  font-weight: bold;
+}
+
+.time {
+  color: #888;
+}
+
+.subject {
+  font-size: 1.1rem;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.content {
+  font-size: 0.9rem;
+  color: #ddd;
+  margin-bottom: 5px;
+}
+
+.labels {
+  display: flex;
+  gap: 5px;
+}
+
+.label {
+  font-size: 0.8rem;
+  background-color: #444;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+
+/* Social Content (Friends List) */
+.social-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Friend Card */
+.friend-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c1c;
+  padding: 8px 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Avatar Styling */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Friend Details */
+.details {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.email {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+/* Role Dropdown */
+.role select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+  cursor: pointer;
+}
+
+.role select:focus {
+  outline: none;
+  border-color: #555;
 }
 
 .inbox-controls .btn {
@@ -344,18 +482,22 @@
 }
 
 /* General styling for dropdown */
+/* Account Dropdown */
 .account-dropdown {
-  position: absolute;
-  top: calc(100% + 5px); /* Align just below the profile */
-  left: 0; /* Ensure it aligns with the profile */
-  width: 250px;
-  background-color: #222;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
+  position: fixed; /* Fixes dropdown relative to the viewport */
+  top: 250px; /* Adjust this value for the desired vertical positioning */
+  left: 10px; /* Adjust horizontal positioning */
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* Keeps it on top */
+  max-height: calc(100vh - 150px); /* Prevents dropdown from overflowing viewport */
+  overflow-y: auto; /* Scrollbar only when needed */
+  width: 250px; /* Consistent width */
 }
+
+
 
 /* Align profile pictures */
 .avatar-large, .avatar {
@@ -508,3 +650,149 @@
     transform: translateY(-8px);
   }
 }
+
+
+/* Inbox Section */
+.inbox-section {
+  background-color: #121212;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.inbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.inbox-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.search-bar {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-input {
+  padding: 8px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.search-input::placeholder {
+  color: #bbb;
+}
+
+/* Email Item Styles */
+.inbox-content {
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.email-item {
+  background-color: #1f1f1f;
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.email-item:hover {
+  background-color: #333;
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sender {
+  font-weight: bold;
+}
+
+.time {
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.subject {
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.content {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #ddd;
+}
+
+.labels {
+  margin-top: 10px;
+}
+
+.label {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  background-color: #444;
+  color: white;
+  border-radius: 15px;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+.label.important {
+  background-color: #f44336;
+}
+
+.label.work {
+  background-color: #2196f3;
+}
+
+.label.personal {
+  background-color: #8bc34a;
+}
+
+.label.budget {
+  background-color: #ff9800;
+}
+
+
+.popover {
+  position: absolute;
+  background-color: rgb(0, 0, 0);
+  border: 1px solid #ccc;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 800px;
+}
+
+.popover-content {
+  padding: 10px;
+}
+
+.popover button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #131313;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.popover button:hover {
+  background-color: #0056b3;
+}
+

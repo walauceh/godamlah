@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import "./Chatbotpage.css";
 import React from "react";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   FaInbox,
   FaRegPaperPlane,
@@ -25,145 +26,279 @@ const Sidebar: React.FC<{ onSelect: (section: string) => void }> = ({ onSelect }
   };
 
   const sections = [
-    { name: "Inbox", icon: <FaInbox />, count: 128 },
-    { name: "Drafts", icon: <FaEnvelopeOpenText />, count: 9 },
+    { name: "Inbox", icon: <FaInbox />, count: 2 },
+    { name: "Drafts", icon: <FaEnvelopeOpenText /> },
     { name: "Sent", icon: <FaRegPaperPlane /> },
-    { name: "Junk", icon: <FaTrashAlt />, count: 23 },
+    { name: "Junk", icon: <FaTrashAlt />},
     { name: "Archive", icon: <FaFolderOpen /> },
-    { name: "Social", icon: <FaUserFriends />, count: 972 },
+    { name: "Social", icon: <FaUserFriends />, count: 3 },
   ];
 
   return (
-    <div className="sidebar">
-      <div className="sidebar-header">
-        <h1 className="app-title">I-Send</h1>
-      </div>
-
-      <nav className="sidebar-nav">
-        <ul>
-          {sections.map((section) => (
-            <li
-              key={section.name}
-              className="sidebar-item"
-              onClick={() => onSelect(section.name)}
-            >
-              <a href="#" className="sidebar-link">
-                <div className="icon">{section.icon}</div>
-                <span>{section.name}</span>
-                {section.count !== undefined && (
-                  <span className="count">{section.count}</span>
-                )}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* User Account Section */}
-      <div className="sidebar-account">
-        <div
-          className="user-profile" onClick={toggleAccountMenu}>
-          <div className="avatar">JD</div>
-          <div className="account-info">
-            <p className="username">John Doe</p>
-            <p className="email">johndoe@example.com</p>
-          </div>
-          <FaChevronDown
-            className={`chevron ${isAccountMenuOpen ? "open" : ""}`} />
+    <div className="main-container">
+      <div className={`sidebar ${isAccountMenuOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <h1 className="app-title">I-Send</h1>
         </div>
-        {isAccountMenuOpen && (
-          <div className="account-dropdown">
-          <div className="account-header">
-            <div className="avatar-large">JD</div>
-            <div>
+
+        <nav className="sidebar-nav">
+          <ul>
+            {sections.map((section) => (
+              <li
+                key={section.name}
+                className="sidebar-item"
+                onClick={() => onSelect(section.name)}
+              >
+                <a href="#" className="sidebar-link">
+                  <div className="icon">{section.icon}</div>
+                  <span>{section.name}</span>
+                  {section.count !== undefined && (
+                    <span className="count">{section.count}</span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* User Account Section */}
+        <div className="sidebar-account">
+          <div className="user-profile" onClick={toggleAccountMenu}>
+            <div className="account-info">
               <p className="username">John Doe</p>
               <p className="email">johndoe@example.com</p>
             </div>
+            <FaChevronDown className={`chevron ${isAccountMenuOpen ? "open" : ""}`} />
           </div>
-          <ul className="account-options">
-            <li>
-              <i className="fa-solid fa-star icon"></i> Upgrade to Pro
-            </li>
-            <li>
-              <i className="fa-solid fa-user icon"></i> Profile
-            </li>
-            <li>
-              <i className="fa-solid fa-gear icon"></i> Settings
-            </li>
-            <li>
-              <i className="fa-solid fa-sign-out-alt icon"></i> Log out
-            </li>
-          </ul>
+          {isAccountMenuOpen && (
+            <div className="account-dropdown">
+              <div className="account-header">
+                <div className="avatar-large">JD</div>
+                <div>
+                  <p className="username">John Doe</p>
+                  <p className="email">johndoe@example.com</p>
+                </div>
+              </div>
+              <ul className="account-options">
+                <li>
+                  <i className="fa-solid fa-star icon"></i> Upgrade to Pro
+                </li>
+                <li>
+                  <i className="fa-solid fa-user icon"></i> Profile
+                </li>
+                <li>
+                  <i className="fa-solid fa-gear icon"></i> Settings
+                </li>
+                <li>
+                  <i className="fa-solid fa-sign-out-alt icon"></i> Log out
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
-        
-        )}
+      </div>
+
+      <div className="content">
+        {/* Content Section */}
       </div>
     </div>
   );
 };
 
-const ContentSection: React.FC<{ section: string }> = ({ section }) => {
-  const sections: Record<string, { title: string; content: string }> = {
-    Inbox: { title: "Inbox", content: "Displaying Inbox Items..." },
-    Drafts: { title: "Drafts", content: "Displaying Draft Items..." },
-    Sent: { title: "Sent", content: "Displaying Sent Items..." },
-    Junk: { title: "Junk", content: "Displaying Junk Items..." },
-    Archive: { title: "Archive", content: "Displaying Archive Items..." },
-    Social: { title: "Social", content: "Displaying Social Items..." },
+interface SectionProps {
+  section: string;
+}
+
+const ContentSection: React.FC<SectionProps> = ({ section }) => {
+  const inboxData = [
+    {
+      sender: "William Smith",
+      subject: "Meeting Tomorrow",
+      time: "about 1 year ago",
+      content: "Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the project details and have some ideas I'd like to share. It's crucial that we...",
+      labels: ["meeting", "work", "important"],
+    },
+    {
+      sender: "Alice Smith",
+      subject: "Re: Project Update",
+      time: "about 1 year ago",
+      content: "Thank you for the project update. It looks great! I've gone through the report, and the progress is impressive. The team has done a fantastic job, and I...",
+      labels: ["work", "important"],
+    },
+  ];
+
+  // State to handle popover visibility and position
+  const [popoverVisible, setPopoverVisible] = useState<boolean>(false);
+  const [popoverContent, setPopoverContent] = useState<string>('');
+  const [popoverPosition, setPopoverPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
+
+  const handleEmailClick = (event: React.MouseEvent<HTMLDivElement>, emailContent: string) => {
+    const { clientX: left, clientY: top } = event;
+    setPopoverPosition({ top, left });
+    setPopoverContent(emailContent);
+    setPopoverVisible(true);
   };
 
-  const currentSection = sections[section];
+  const handleClosePopover = () => {
+    setPopoverVisible(false);
+  };
 
-  return currentSection ? (
-    <div className={`${section.toLowerCase()}-section`}>
-      <h2>{currentSection.title}</h2>
-      <div className={`${section.toLowerCase()}-list`}>
-        <div>{currentSection.content}</div>
+  const sections: Record<string, JSX.Element | string> = {
+    Inbox: (
+      <div className="inbox-section">
+        <div className="inbox-header">
+          <h2 className="inbox-title">Inbox</h2>
+          <div className="search-bar">
+            <input type="text" placeholder="Search inbox..." className="search-input" />
+          </div>
+        </div>
+
+        <div className="inbox-content">
+          {inboxData.map((email, index) => (
+            <div key={index} className="email-item" onClick={(e) => handleEmailClick(e, email.content)}>
+              <div className="email-header">
+                <div className="sender">{email.sender}</div>
+                <div className="time">{email.time}</div>
+              </div>
+              <div className="subject">{email.subject}</div>
+              <div className="content">{email.content}</div>
+              <div className="labels">
+                {email.labels.map((label, idx) => (
+                  <span key={idx} className="label">{label}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Popover */}
+        {popoverVisible && (
+          <div className="popover" style={{ top: popoverPosition.top + 10, left: popoverPosition.left + 10 }}>
+            <div className="popover-content">
+              <p>{popoverContent}</p>
+              <button onClick={handleClosePopover}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  ) : (
-    <div className="default-section">
-      <h2>Welcome</h2>
-      <p>Please select a section from the sidebar.</p>
+    ),
+    Drafts: "Displaying Draft Items...",
+    Sent: "Displaying Sent Items...",
+    Junk: "Displaying Junk Items...",
+    Archive: "Displaying Archive Items...",
+    Social: (
+      <div className="social-content">
+        <div className="social-content">
+          <div className="friend-card">
+            <div className="avatar">O</div>
+            <div className="details">
+              <div className="name">Olivia Martin</div>
+              <div className="email">m@example.com</div>
+            </div>
+            <div className="role">
+              <select defaultValue="Can edit">
+                <option value="Can edit">Can edit</option>
+                <option value="Can view">Can view</option>
+              </select>
+            </div>
+          </div>
+          <div className="friend-card">
+            <div className="avatar">I</div>
+            <div className="details">
+              <div className="name">Isabella Nguyen</div>
+              <div className="email">b@example.com</div>
+            </div>
+            <div className="role">
+              <select defaultValue="Can view">
+                <option value="Can edit">Can edit</option>
+                <option value="Can view">Can view</option>
+              </select>
+            </div>
+          </div>
+          <div className="friend-card">
+            <div className="avatar">S</div>
+            <div className="details">
+              <div className="name">Sofia Davis</div>
+              <div className="email">p@example.com</div>
+            </div>
+            <div className="role">
+              <select defaultValue="Can view">
+                <option value="Can edit">Can edit</option>
+                <option value="Can view">Can view</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+  };
+
+  return (
+    <div className="content-section">
+      {sections[section] || <p>Select a section to view content</p>}
     </div>
   );
 };
+
+
 
 export default function ChatBotPage() {
   const [messages, setMessages] = useState<{ sender: "user" | "bot"; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [selectedSection, setSelectedSection] = useState("Inbox");
   const [isTyping, setIsTyping] = useState(false);
+  const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
 
-  const handleSend = () => {
+  useEffect(() => {
+    // Replace "YOUR_API_KEY" with your actual API key
+    const ai = new GoogleGenerativeAI("AIzaSyBQ0DmKwRiXdOG9nfzMzcNbhSV0l99_7ik");
+    setGenAI(ai);
+  }, []);
+
+  const handleSend = async () => {
     if (input.trim()) {
       const userMessage = { sender: "user" as const, text: input };
       setMessages((prev) => [...prev, userMessage]);
 
       setIsTyping(true);
 
-      setTimeout(() => {
+      try {
         const botMessage = {
           sender: "bot" as const,
-          text: getBotResponse(input),
+          text: await getBotResponse(input),
         };
 
         setMessages((prev) => [...prev, botMessage]);
+      } catch (error) {
+        console.error("Error getting response:", error);
+        setMessages((prev) => [...prev, { sender: "bot", text: "Something went wrong. Please try again." }]);
+      } finally {
         setIsTyping(false);
-      }, 2000);
-
-      setInput("");
+        setInput("");
+      }
     }
   };
 
-  const getBotResponse = (message: string): string => {
-    const responses: Record<string, string> = {
-      hello: "Hi there! How can I assist you?",
-      help: "Sure, I'm here to help! What do you need?",
-      bye: "Goodbye! Have a great day!",
-    };
-    return responses[message.toLowerCase()] || "I'm sorry, I don't understand.";
+  const getBotResponse = async (message: string): Promise<string> => {
+    if (!genAI) return "Loading...";
+  
+    try {
+      // Define your model
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  
+      // Create a prompt using the provided message
+      const result = await model.generateContent(message);
+  
+      // Extract the response text safely
+      const response = result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+      return response || "I'm sorry, I don't understand.";
+    } catch (error) {
+      console.error("Error generating response:", error);
+      return "Something went wrong. Please try again.";
+    }
   };
+  
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
