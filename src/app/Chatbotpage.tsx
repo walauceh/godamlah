@@ -114,28 +114,57 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
     {
       sender: "William Smith",
       subject: "Meeting Tomorrow",
-      time: "about 1 year ago",
-      content: "Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the project details and have some ideas I'd like to share. It's crucial that we...",
-      labels: ["meeting", "work", "important"],
+      versionHistory: [
+        { date: "16 days ago", version: "Completed", user: "Benson" },
+        { date: "Jun 7, 11:57 AM", version: "Ready for dev", user: "Benson" },
+        { date: "Jun 3, 12:10 PM", version: "Updated font properties", user: "Oscar" },
+        { date: "20 days ago", version: "Ready for dev", user: "Oscar" },
+      ]
     },
     {
       sender: "Alice Smith",
       subject: "Re: Project Update",
-      time: "about 1 year ago",
-      content: "Thank you for the project update. It looks great! I've gone through the report, and the progress is impressive. The team has done a fantastic job, and I...",
-      labels: ["work", "important"],
+      versionHistory: [
+        { date: "15 days ago", version: "Reviewed and confirmed", user: "Alice" },
+        { date: "Jun 5, 9:30 AM", version: "Initial Draft", user: "Alice" },
+      ]
     },
   ];
 
-  // State to handle popover visibility and position
   const [popoverVisible, setPopoverVisible] = useState<boolean>(false);
-  const [popoverContent, setPopoverContent] = useState<string>('');
+  const [popoverContent, setPopoverContent] = useState<JSX.Element | string>('');
   const [popoverPosition, setPopoverPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
 
-  const handleEmailClick = (event: React.MouseEvent<HTMLDivElement>, emailContent: string) => {
-    const { clientX: left, clientY: top } = event;
-    setPopoverPosition({ top, left });
-    setPopoverContent(emailContent);
+  const handleEmailClick = (event: React.MouseEvent<HTMLDivElement>, versionHistory: Array<{ date: string, version: string, user: string }>) => {
+    setPopoverPosition({ top: 0, left: 0 }); // Set to zero since it's no longer position-relative to the element clicked
+
+    // Create version history content
+    const versionHistoryContent = (
+      <div className="version-history-popover">
+        <div className="popover-header">
+          <span>Version history</span>
+          <button className="share-button">Share</button>
+        </div>
+        <div className="version-timeline">
+          {versionHistory.map((entry, index) => (
+            <div key={index} className="version-item">
+              <div className="version-status">
+                <span>{entry.version}</span>
+                <span className="version-user">- {entry.user}</span>
+              </div>
+              <div className="version-date">{entry.date}</div>
+            </div>
+          ))}
+        </div>
+        <div className="show-older">
+          <button>Show older</button>
+        </div>
+        {/* Close button moved inside the popover */}
+        <button className="close-popover" onClick={handleClosePopover}>Close</button>
+      </div>
+    );
+
+    setPopoverContent(versionHistoryContent);
     setPopoverVisible(true);
   };
 
@@ -155,17 +184,10 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
 
         <div className="inbox-content">
           {inboxData.map((email, index) => (
-            <div key={index} className="email-item" onClick={(e) => handleEmailClick(e, email.content)}>
+            <div key={index} className="email-item" onClick={(e) => handleEmailClick(e, email.versionHistory)}>
               <div className="email-header">
                 <div className="sender">{email.sender}</div>
-                <div className="time">{email.time}</div>
-              </div>
-              <div className="subject">{email.subject}</div>
-              <div className="content">{email.content}</div>
-              <div className="labels">
-                {email.labels.map((label, idx) => (
-                  <span key={idx} className="label">{label}</span>
-                ))}
+                <div className="subject">{email.subject}</div>
               </div>
             </div>
           ))}
@@ -173,10 +195,9 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
 
         {/* Popover */}
         {popoverVisible && (
-          <div className="popover" style={{ top: popoverPosition.top + 10, left: popoverPosition.left + 10 }}>
+          <div className="popover">
             <div className="popover-content">
-              <p>{popoverContent}</p>
-              <button onClick={handleClosePopover}>Close</button>
+              {popoverContent}
             </div>
           </div>
         )}
@@ -186,51 +207,7 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
     Sent: "Displaying Sent Items...",
     Junk: "Displaying Junk Items...",
     Archive: "Displaying Archive Items...",
-    Social: (
-      <div className="social-content">
-        <div className="social-content">
-          <div className="friend-card">
-            <div className="avatar">O</div>
-            <div className="details">
-              <div className="name">Olivia Martin</div>
-              <div className="email">m@example.com</div>
-            </div>
-            <div className="role">
-              <select defaultValue="Can edit">
-                <option value="Can edit">Can edit</option>
-                <option value="Can view">Can view</option>
-              </select>
-            </div>
-          </div>
-          <div className="friend-card">
-            <div className="avatar">I</div>
-            <div className="details">
-              <div className="name">Isabella Nguyen</div>
-              <div className="email">b@example.com</div>
-            </div>
-            <div className="role">
-              <select defaultValue="Can view">
-                <option value="Can edit">Can edit</option>
-                <option value="Can view">Can view</option>
-              </select>
-            </div>
-          </div>
-          <div className="friend-card">
-            <div className="avatar">S</div>
-            <div className="details">
-              <div className="name">Sofia Davis</div>
-              <div className="email">p@example.com</div>
-            </div>
-            <div className="role">
-              <select defaultValue="Can view">
-                <option value="Can edit">Can edit</option>
-                <option value="Can view">Can view</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
+    Social: "Displaying Social Items...",
   };
 
   return (
