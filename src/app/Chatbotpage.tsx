@@ -16,11 +16,7 @@ import {
   FaTrashAlt,
   FaEnvelopeOpenText,
   FaUserFriends,
-  FaCog,
-  FaSignOutAlt,
-  FaUser,
   FaChevronDown,
-  FaStar,
 } from "react-icons/fa";
 
 const Sidebar: React.FC<{ onSelect: (section: string) => void }> = ({ onSelect }) => {
@@ -138,11 +134,8 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
 
   const [popoverVisible, setPopoverVisible] = useState<boolean>(false);
   const [popoverContent, setPopoverContent] = useState<JSX.Element | string>('');
-  const [popoverPosition, setPopoverPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
 
   const handleEmailClick = (event: React.MouseEvent<HTMLDivElement>, versionHistory: Array<{ date: string, version: string, user: string }>) => {
-    setPopoverPosition({ top: 0, left: 0 }); // Set to zero since it's no longer position-relative to the element clicked
-
     // Create version history content
     const versionHistoryContent = (
       <div className="version-history-popover">
@@ -230,7 +223,6 @@ export default function ChatBotPage() {
   const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -298,7 +290,7 @@ export default function ChatBotPage() {
   };
 
   const handleVoiceInput = () => {
-    const recognition = new (window.SpeechRecognition || (window as any).webkitSpeechRecognition)();
+    const recognition = new (window.SpeechRecognition || (window as Window).webkitSpeechRecognition)();
     recognition.lang = "en-US";
     recognition.interimResults = false;
 
@@ -315,7 +307,7 @@ export default function ChatBotPage() {
       setInput(transcript);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: Console) => {
       console.error("Speech recognition error:", event.error);
     };
 
@@ -344,7 +336,6 @@ export default function ChatBotPage() {
 
     setIsUploading(true);
     setError(null);
-    setUploadedFileUrl(null);
 
     try {
       const formData = new FormData();
@@ -377,8 +368,6 @@ export default function ChatBotPage() {
       await storeMetadata(blockId, encryptedCID);
 
       console.log('Encrypted CID stored on blockchain with blockId:', blockId);
-
-      setUploadedFileUrl(data.url);
       console.log('File uploaded successfully');
 
       toast.success(
@@ -449,7 +438,7 @@ export default function ChatBotPage() {
             {messages.length === 0 ? (
               <div className="instructions">
                 <p>Welcome to I-Send!</p>
-                <p>Here's how you can use this chatbot:</p>
+                <p>Here is how you can use this chatbot:</p>
                 <ul>
                   <li>Type <b>hello</b> to start the conversation.</li>
                   <li>Ask for <b>help</b> to get assistance.</li>
