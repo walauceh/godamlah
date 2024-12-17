@@ -1,0 +1,864 @@
+/* Import FontAwesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+
+.main-container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-container, .sidebar {
+  overflow: visible; /* Prevent content from being clipped */
+  position: relative; /* Ensures proper positioning for absolute children */
+}
+
+
+
+/* General Chat App Styling */
+.chat-app {
+  display: flex;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  position: relative;
+  width: 240px;
+  background-color: #1a1a1a;
+  border-right: 1px solid #333;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.app-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+
+.sidebar-account {
+  position: relative;
+  margin-top: auto;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  padding: 10px 0px;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  border-top: 1px solid #333;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.sidebar-nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-nav {
+  flex-grow: 1; /* Allow the nav to grow and push the account section to the bottom */
+}
+
+.sidebar-item {
+  margin-bottom: 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.sidebar-link:hover {
+  background-color: #333;
+}
+
+.sidebar-link .icon {
+  margin-right: 10px;
+}
+
+.sidebar-link .count {
+  margin-left: auto;
+  background-color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Inbox and Chat Container */
+.inbox-and-chat-container {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  height: 100vh;
+  margin-left: 30px;
+}
+
+
+
+/* Content Section */
+.content-section {
+  width: 350px;
+  max-height: 600px;
+  background-color: #121212;
+  color: #fff;
+  padding: 10px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Inbox Content */
+.inbox-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-item {
+  background-color: #1f1f1f;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.sender {
+  font-weight: bold;
+}
+
+.time {
+  color: #888;
+}
+
+.subject {
+  font-size: 1.1rem;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.content {
+  font-size: 0.9rem;
+  color: #ddd;
+  margin-bottom: 5px;
+}
+
+.labels {
+  display: flex;
+  gap: 5px;
+}
+
+.label {
+  font-size: 0.8rem;
+  background-color: #444;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+
+/* Social Content (Friends List) */
+.social-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Friend Card */
+.friend-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c1c;
+  padding: 8px 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Avatar Styling */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Friend Details */
+.details {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.email {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+/* Role Dropdown */
+.role select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+  cursor: pointer;
+}
+
+.role select:focus {
+  outline: none;
+  border-color: #555;
+}
+
+.inbox-controls .btn {
+  margin-left: 10px;
+}
+
+.btn {
+  background-color: #4d4d4d;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary {
+  background-color: #0077b6;
+}
+
+.btn-primary:hover {
+  background-color: #005c8b;
+}
+
+.btn-secondary {
+  background-color: #4d4d4d;
+}
+
+.btn-secondary:hover {
+  background-color: #3d3d3d;
+}
+
+.inbox-list {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.inbox-item {
+  background-color: #222;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.inbox-item-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.inbox-item-from {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.inbox-item-subject {
+  flex: 1;
+}
+
+.inbox-item-date {
+  color: #666;
+}
+
+.inbox-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.inbox-item-tag {
+  background-color: #4d4d4d;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.inbox-item-body {
+  line-height: 1.5;
+}
+
+/* Chat Container */
+.chat-container {
+  flex: 1;
+  max-width: 800px;
+  min-width: 800px;
+  padding: 20px;
+  border-left: 1px solid #333;
+  box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  background-color: #222;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  max-width: 60%;
+  padding: 12px 16px;
+  border-radius: 16px;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #0077b6;
+  color: #fff;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background-color: #4d4d4d;
+  color: #fff;
+}
+
+.instructions {
+  text-align: center;
+  color: lightgray;
+  margin-top: 1%;
+}
+
+.instructions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.instructions li {
+  margin: 5px 0;
+}
+
+/* Buttons Section */
+.buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.action-button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #555;
+}
+
+/* Input Area */
+.input-container {
+  display: flex;
+  align-items: center;
+  background-color: #222;
+  padding: 12px 20px;
+  border-top: 1px solid #333;
+}
+
+.Textarea {
+  flex-grow: 1;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  resize: none;
+}
+
+.Textarea::placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+/* Account Dropdown */
+.account-info {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.email {
+  font-size: 14px;
+  color: #aaa;
+  margin: 0;
+}
+
+.chevron {
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+/* General styling for dropdown */
+/* Account Dropdown */
+.account-dropdown {
+  position: fixed; /* Fixes dropdown relative to the viewport */
+  top: 250px; /* Adjust this value for the desired vertical positioning */
+  left: 10px; /* Adjust horizontal positioning */
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* Keeps it on top */
+  max-height: calc(100vh - 150px); /* Prevents dropdown from overflowing viewport */
+  overflow-y: auto; /* Scrollbar only when needed */
+  width: 250px; /* Consistent width */
+}
+
+
+
+/* Align profile pictures */
+.avatar-large, .avatar {
+  width: 50px; /* Same size for all profile pictures */
+  height: 50px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 10px;
+}
+
+/* Dropdown header styling */
+.account-dropdown .account-header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.account-dropdown .avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+}
+
+.account-dropdown .account-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dropdown options */
+.account-dropdown .account-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.account-dropdown .account-options li {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #aaa;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.account-dropdown .account-options li:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.account-dropdown .icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* Adjust dropdown position */
+.account-dropdown-wrapper {
+  position: absolute;
+  top: 50%; /* Adjust to align properly */
+  left: 100%; /* Position to the right of the sidebar */
+  transform: translateY(-50%); /* Center vertically */
+}
+
+
+.account-header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+}
+
+.account-options li {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #aaa;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.account-options li:hover {
+  color: #fff;
+}
+
+.account-options .icon {
+  margin-right: 10px;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 3px;
+  margin-left: 3px;
+  height: 20px;
+}
+
+.typing-indicator .dot {
+  width: 6px;
+  height: 6px;
+  background-color: #888;
+  border-radius: 50%;
+  animation: dot-jump 1.2s infinite ease-in-out;
+}
+
+.typing-indicator .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-jump {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+
+/* Inbox Section */
+.inbox-section {
+  background-color: #121212;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.inbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.inbox-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.search-bar {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-input {
+  padding: 8px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.search-input::placeholder {
+  color: #bbb;
+}
+
+/* Email Item Styles */
+.inbox-content {
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.email-item {
+  background-color: #1f1f1f;
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.email-item:hover {
+  background-color: #333;
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sender {
+  font-weight: bold;
+}
+
+.time {
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.subject {
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.content {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #ddd;
+}
+
+.labels {
+  margin-top: 10px;
+}
+
+.label {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  background-color: #444;
+  color: white;
+  border-radius: 15px;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+.label.important {
+  background-color: #f44336;
+}
+
+.label.work {
+  background-color: #2196f3;
+}
+
+.label.personal {
+  background-color: #8bc34a;
+}
+
+.label.budget {
+  background-color: #ff9800;
+}
+
+.version-history-popover {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: fixed; /* Use fixed positioning to position it in the viewport */
+  top: 50%; /* Position it in the center of the screen */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Adjust the position for perfect centering */
+  z-index: 1000; /* Make sure it stays on top of other content */
+}
+
+.popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+}
+
+.popover-header span {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.share-button {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.version-timeline {
+  margin-top: 20px;
+}
+
+.version-item {
+  margin-bottom: 10px;
+}
+
+.version-status {
+  font-weight: bold;
+  color: #333;
+}
+
+.version-user {
+  color: #555;
+}
+
+.version-date {
+  color: #777;
+  font-size: 12px;
+}
+
+.show-older {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.show-older button {
+  background-color: #ccc;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* New style for the close button inside the popover */
+.close-popover {
+  background-color: #ff4d4d; /* Red color */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.close-popover:hover {
+  background-color: #e60000; /* Darker red on hover */
+}
+
+
+
+
