@@ -247,9 +247,18 @@ export default function ChatBotPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
   const [isListening, setIsListening] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const geminiAPI = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
+  if (!geminiAPI) {
+    throw new Error("Gemini API key not found. Please set the GEMINI_API_KEY environment variable.");
+  }
 
   useEffect(() => {
-    const ai = new GoogleGenerativeAI("AIzaSyBQ0DmKwRiXdOG9nfzMzcNbhSV0l99_7ik");
+    const ai = new GoogleGenerativeAI(geminiAPI);
     setGenAI(ai);
   }, []);
 
@@ -323,6 +332,48 @@ export default function ChatBotPage() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+      setError(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setError('Please select a file to upload.');
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+    setUploadedFileUrl(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload file.');
+      }
+
+      const data = await response.json();
+      setUploadedFileUrl(data.url);
+      console.log('File uploaded successfully:', data.url);
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
   return (
     <div className="chat-app">
       <Sidebar onSelect={(section) => setSelectedSection(section)} />
@@ -359,15 +410,42 @@ export default function ChatBotPage() {
               </div>
             )}
           </div>
+
           <div className="buttons-container">
-            <button className="action-button">Add Metadata</button>
-            <button className="action-button">Grant Access</button>
+          <input type="file" onChange={handleFileChange} disabled={isUploading}/>
+
+            {/* Display Upload Progress */}
+            {isUploading && <p>Uploading your file, please wait...</p>}
+
+            {/* Display File URL */}
+            {uploadedFileUrl && (
+              <div style={{ marginTop: '20px' }}>
+                <p>File uploaded successfully:</p>
+                <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
+                  {uploadedFileUrl}
+                </a>
+              </div>
+            )}
+
+            {/* Display Error Message */}
+            {error && (
+              <div style={{ marginTop: '20px', color: 'red' }}>
+                <p>Error: {error}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="buttons-container">
+            <button className="action-button" onClick={handleUpload} disabled={!file || isUploading}>
+              {isUploading ? 'Uploading...' : 'Upload Files'}
+            </button>
+            <button className="action-button">Share Files</button>
             <button className="action-button">Check Access</button>
             <button className="action-button" onClick={handleVoiceInput}>
               {isListening ? "Listening..." : "🎙️ Voice Input"}
             </button>
           </div>
-
+          
           <div className="input-container">
             <textarea
               value={input}
