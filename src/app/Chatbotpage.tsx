@@ -1,9 +1,14 @@
 "use client";
 
 import { JSX, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Chatbotpage.css";
 import React from "react";
+import ReactModal from "react-modal";
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { encryptCID, decryptCID } from "../utils/encryption";
+import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/contract";
 import {
   FaInbox,
   FaRegPaperPlane,
@@ -228,6 +233,10 @@ export default function ChatBotPage() {
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalPurpose, setModalPurpose] = useState<"grant" | "revoke" | "retrieve" | null>(null);
+  const [blockId, setBlockId] = useState<number | null>(null);
+  const [userAddress, setUserAddress] = useState<string>("");
   const geminiAPI = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
   if (!geminiAPI) {
@@ -238,6 +247,17 @@ export default function ChatBotPage() {
     const ai = new GoogleGenerativeAI(geminiAPI);
     setGenAI(ai);
   }, []);
+
+  const openModal = (purpose: "grant" | "revoke" | "retrieve") => {
+    setModalPurpose(purpose);
+    setModalOpen(true);
+  };
+  
+  const closeModal = () => {
+    setModalOpen(false);
+    setBlockId(null);
+    setUserAddress("");
+  };
 
   const handleSend = async () => {
     if (input.trim()) {
@@ -341,15 +361,77 @@ export default function ChatBotPage() {
       }
 
       const data = await response.json();
+      const cid = data.cid; // CID from the file upload response
+      const secretKey = process.env.NEXT_PUBLIC_RANDOM_UUID;
+
+      if (!secretKey) {
+        throw new Error('Secret key not found');
+      }
+
+      const encryptedCID = encryptCID(cid, secretKey);
+
+      console.log('Encrypted CID:', encryptedCID);
+
+      // Save encrypted CID to blockchain
+      const blockId = Date.now(); // Use a unique blockId (e.g., timestamp)
+      await storeMetadata(blockId, encryptedCID);
+
+      console.log('Encrypted CID stored on blockchain with blockId:', blockId);
+
       setUploadedFileUrl(data.url);
-      console.log('File uploaded successfully:', data.url);
+      console.log('File uploaded successfully');
+
+      toast.success(
+        <div>
+          File uploaded successfully!{" "}
+          <a href={data.url} target="_blank" rel="noopener noreferrer">
+            Open File
+          </a>
+        </div>
+      );
+
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      toast.error("File upload failed.");
     } finally {
       setIsUploading(false);
     }
   };
+
+  const handleRetrieveMetadata = async (blockId: number) => {
+    try {
+      const encryptedCID = await getMetadata(blockId);
+      console.log('Encrypted CID from blockchain:', encryptedCID);
+  
+      const decryptedCID = decryptCID(encryptedCID, "your-secret-key");
+      console.log('Decrypted CID:', decryptedCID);
+  
+      const fileUrl = `https://w3s.link/ipfs/${decryptedCID}`;
+      console.log('File URL:', fileUrl);
+    } catch (error) {
+      console.error('Error retrieving metadata:', error);
+      setError(error instanceof Error ? error.message : 'Access denied or invalid block ID');
+    }
+  };
+  
+  const handleGrantAccess = async (blockId: number, userAddress: string) => {
+    try {
+      await grantAccess(blockId, userAddress);
+      console.log(`Access granted to ${userAddress} for blockId ${blockId}`);
+    } catch (error) {
+      console.error('Error granting access:', error);
+    }
+  };
+  
+  const handleRevokeAccess = async (blockId: number, userAddress: string) => {
+    try {
+      await revokeAccess(blockId, userAddress);
+      console.log(`Access revoked for ${userAddress} for blockId ${blockId}`);
+    } catch (error) {
+      console.error('Error revoking access:', error);
+    }
+  };  
   
   return (
     <div className="chat-app">
@@ -394,16 +476,6 @@ export default function ChatBotPage() {
             {/* Display Upload Progress */}
             {isUploading && <p>Uploading your file, please wait...</p>}
 
-            {/* Display File URL */}
-            {uploadedFileUrl && (
-              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column' }}>
-                <p>File uploaded successfully:</p>
-                <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
-                  {uploadedFileUrl}
-                </a>
-              </div>
-            )}
-
             {/* Display Error Message */}
             {error && (
               <div style={{ marginTop: '20px', color: 'red' }}>
@@ -416,8 +488,9 @@ export default function ChatBotPage() {
             <button className="action-button" onClick={handleUpload} disabled={!file || isUploading}>
               {isUploading ? 'Uploading...' : 'Upload Files'}
             </button>
-            <button className="action-button">Share Files</button>
-            <button className="action-button">Check Access</button>
+            <button className="action-button" onClick={() => openModal("retrieve")}>Access Files</button>
+            <button className="action-button" onClick={() => openModal("grant")}>Share Files</button>
+            <button className="action-button" onClick={() => openModal("revoke")}>Remove Access</button>
             <button className="action-button" onClick={handleVoiceInput}>
               {isListening ? "Listening..." : "🎙️ Voice Input"}
             </button>
@@ -433,6 +506,60 @@ export default function ChatBotPage() {
             />
             <button onClick={handleSend} className="send-button">Send</button>
           </div>
+          
+          {/* Modal */}
+          <ReactModal
+            isOpen={modalOpen}
+            onRequestClose={closeModal}
+            contentLabel="Input Details"
+            ariaHideApp={false}
+            className="custom-modal"
+          >
+            <h2>{modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}</h2>
+            <div>
+              <label>
+                Block ID:
+                <input
+                  type="number"
+                  value={blockId || ""}
+                  onChange={(e) => setBlockId(parseInt(e.target.value))}
+                  required
+                />
+              </label>
+              {modalPurpose !== "retrieve" && (
+                <label>
+                  User Address:
+                  <input
+                    type="text"
+                    value={userAddress}
+                    onChange={(e) => setUserAddress(e.target.value)}
+                    required
+                  />
+                </label>
+              )}
+              <div className="modal-buttons">
+                <button onClick={closeModal}>Cancel</button>
+                <button
+                  onClick={async () => {
+                    if (modalPurpose === "retrieve" && blockId !== null) {
+                      await handleRetrieveMetadata(blockId);
+                    } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
+                      await handleGrantAccess(blockId, userAddress);
+                    } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
+                      await handleRevokeAccess(blockId, userAddress);
+                    }
+                    closeModal();
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </ReactModal>
+
+          {/* Toast Notifications */}
+          <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
+
         </div>
       </div>
     </div>

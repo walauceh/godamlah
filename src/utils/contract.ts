@@ -1,46 +1,7 @@
 import { BrowserProvider, ethers } from "ethers";
+import CONTRACT_ABI from "../contracts/SecureFileStorage.json";
 
-// Replace with your contract's deployed address and ABI
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-const CONTRACT_ABI = [
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "blockId", "type": "uint256" },
-      { "internalType": "string", "name": "encryptedCID", "type": "string" }
-    ],
-    "name": "storeMetadata",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "blockId", "type": "uint256" }],
-    "name": "getMetadata",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "blockId", "type": "uint256" },
-      { "internalType": "address", "name": "user", "type": "address" }
-    ],
-    "name": "grantAccess",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "blockId", "type": "uint256" },
-      { "internalType": "address", "name": "user", "type": "address" }
-    ],
-    "name": "revokeAccess",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
 
 export const getContract = async () => {
   if (!window.ethereum) {
@@ -52,7 +13,7 @@ export const getContract = async () => {
   }
 
   const provider = new BrowserProvider(window.ethereum);
-  const signer = provider.getSigner();
+  const signer = await provider.getSigner();
   return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 };
 
