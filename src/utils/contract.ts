@@ -1,46 +1,63 @@
 import { BrowserProvider, ethers } from "ethers";
+import CONTRACT_ABI from "../contracts/SecureFileStorage.json";
 
-// Replace with your contract's deployed address and ABI
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-const CONTRACT_ABI = [
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "blockId", "type": "uint256" },
-      { "internalType": "string", "name": "encryptedCID", "type": "string" }
-    ],
-    "name": "storeMetadata",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+
+const SEPOLIA_RPC_URL = 'https://sepolia.infura.io/v3/52a17c0ecc1c4ec7ba25cbd9a3a9a5ec';
+const SEPOLIA_NETWORK_CONFIG = {
+  chainId: '0xaa36a7', // 11155111 in hexadecimal
+  chainName: 'Sepolia Testnet',
+  nativeCurrency: {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18
   },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "blockId", "type": "uint256" }],
-    "name": "getMetadata",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "blockId", "type": "uint256" },
-      { "internalType": "address", "name": "user", "type": "address" }
-    ],
-    "name": "grantAccess",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "blockId", "type": "uint256" },
-      { "internalType": "address", "name": "user", "type": "address" }
-    ],
-    "name": "revokeAccess",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+  rpcUrls: [SEPOLIA_RPC_URL],
+  blockExplorerUrls: ['https://sepolia.etherscan.io']
+};
+
+export async function connectWallet(): Promise<BrowserProvider | null> {
+  if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+    try {
+      // Request account access
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      
+      const provider = new BrowserProvider(window.ethereum);
+
+      try {
+        // Attempt to switch to Sepolia network
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: SEPOLIA_NETWORK_CONFIG.chainId }],
+        });
+      } catch (switchError: any) {
+        // If network not added, add it
+        if (switchError.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [SEPOLIA_NETWORK_CONFIG],
+            });
+          } catch (addError) {
+            console.error('Failed to add Sepolia network:', addError);
+            return null;
+          }
+        } else {
+          console.error('Failed to switch to Sepolia network:', switchError);
+          return null;
+        }
+      }
+
+      return provider;
+    } catch (error) {
+      console.error('Wallet connection failed:', error);
+      return null;
+    }
+  } else {
+    console.error('MetaMask is not installed');
+    return null;
   }
-];
+}
 
 export const getContract = async () => {
   if (!window.ethereum) {
@@ -51,8 +68,21 @@ export const getContract = async () => {
     throw new Error("Contract address is not set");
   }
 
-  const provider = new BrowserProvider(window.ethereum);
-  const signer = provider.getSigner();
+  // Connect wallet and get provider
+  const provider = await connectWallet();
+  if (!provider) {
+    throw new Error("Failed to connect wallet");
+  }
+
+  const signer = await provider.getSigner();
+  
+  // Verify network
+  const network = await provider.getNetwork();
+  console.log('Current Network:', {
+    chainId: network.chainId.toString(),
+    name: network.name
+  });
+
   return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 };
 
