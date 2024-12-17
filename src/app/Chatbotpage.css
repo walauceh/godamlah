@@ -772,30 +772,93 @@
   background-color: #ff9800;
 }
 
-
-.popover {
-  position: absolute;
-  background-color: rgb(0, 0, 0);
-  border: 1px solid #ccc;
-  padding: 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 800px;
+.version-history-popover {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: fixed; /* Use fixed positioning to position it in the viewport */
+  top: 50%; /* Position it in the center of the screen */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Adjust the position for perfect centering */
+  z-index: 1000; /* Make sure it stays on top of other content */
 }
 
-.popover-content {
-  padding: 10px;
+.popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
 }
 
-.popover button {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #131313;
+.popover-header span {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.share-button {
+  background-color: #007bff;
   color: white;
+  padding: 5px 10px;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.popover button:hover {
-  background-color: #0056b3;
+.version-timeline {
+  margin-top: 20px;
 }
+
+.version-item {
+  margin-bottom: 10px;
+}
+
+.version-status {
+  font-weight: bold;
+  color: #333;
+}
+
+.version-user {
+  color: #555;
+}
+
+.version-date {
+  color: #777;
+  font-size: 12px;
+}
+
+.show-older {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.show-older button {
+  background-color: #ccc;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* New style for the close button inside the popover */
+.close-popover {
+  background-color: #ff4d4d; /* Red color */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.close-popover:hover {
+  background-color: #e60000; /* Darker red on hover */
+}
+
+
+
 
