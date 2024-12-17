@@ -403,8 +403,13 @@ export default function ChatBotPage() {
     try {
       const encryptedCID = await getMetadata(blockId);
       console.log('Encrypted CID from blockchain:', encryptedCID);
+      const secretKey = process.env.NEXT_PUBLIC_RANDOM_UUID;
+
+      if (!secretKey) {
+        throw new Error('Secret key not found');
+      }
   
-      const decryptedCID = decryptCID(encryptedCID, "your-secret-key");
+      const decryptedCID = decryptCID(encryptedCID, secretKey);
       console.log('Decrypted CID:', decryptedCID);
   
       const fileUrl = `https://w3s.link/ipfs/${decryptedCID}`;
