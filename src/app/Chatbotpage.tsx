@@ -396,7 +396,7 @@ export default function ChatBotPage() {
 
             {/* Display File URL */}
             {uploadedFileUrl && (
-              <div style={{ marginTop: '20px' }}>
+              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column' }}>
                 <p>File uploaded successfully:</p>
                 <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer">
                   {uploadedFileUrl}
