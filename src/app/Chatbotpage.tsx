@@ -207,7 +207,51 @@ const ContentSection: React.FC<SectionProps> = ({ section }) => {
     Sent: "Displaying Sent Items...",
     Junk: "Displaying Junk Items...",
     Archive: "Displaying Archive Items...",
-    Social: "Displaying Social Items...",
+    Social: (
+      <div className="social-content">
+        <div className="social-content">
+          <div className="friend-card">
+            <div className="avatar">O</div>
+            <div className="details">
+              <div className="name">Olivia Martin</div>
+              <div className="email">m@example.com</div>
+            </div>
+            <div className="role">
+              <select defaultValue="Can edit">
+                <option value="Can edit">Can edit</option>
+                <option value="Can view">Can view</option>
+              </select>
+            </div>
+          </div>
+          <div className="friend-card">
+            <div className="avatar">I</div>
+            <div className="details">
+              <div className="name">Isabella Nguyen</div>
+              <div className="email">b@example.com</div>
+            </div>
+            <div className="role">
+              <select defaultValue="Can view">
+                <option value="Can edit">Can edit</option>
+                <option value="Can view">Can view</option>
+              </select>
+            </div>
+          </div>
+          <div className="friend-card">
+            <div className="avatar">S</div>
+            <div className="details">
+              <div className="name">Sofia Davis</div>
+              <div className="email">p@example.com</div>
+            </div>
+            <div className="role">
+              <select defaultValue="Can view">
+                <option value="Can edit">Can edit</option>
+                <option value="Can view">Can view</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
   };
 
   return (
