@@ -1,5 +1,9 @@
 "use client";
 
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { PageHeader } from "@/components/page-header";
+
 import { JSX, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,106 +13,106 @@ import ReactModal from "react-modal";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { encryptCID, decryptCID } from "../utils/encryption";
 import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/contract";
-import {
-  FaInbox,
-  FaRegPaperPlane,
-  FaFolderOpen,
-  FaTrashAlt,
-  FaEnvelopeOpenText,
-  FaUserFriends,
-  FaCog,
-  FaSignOutAlt,
-  FaUser,
-  FaChevronDown,
-  FaStar,
-} from "react-icons/fa";
+// import {
+//   FaInbox,
+//   FaRegPaperPlane,
+//   FaFolderOpen,
+//   FaTrashAlt,
+//   FaEnvelopeOpenText,
+//   FaUserFriends,
+//   FaCog,
+//   FaSignOutAlt,
+//   FaUser,
+//   FaChevronDown,
+//   FaStar,
+// } from "react-icons/fa";
 
-const Sidebar: React.FC<{ onSelect: (section: string) => void }> = ({ onSelect }) => {
-  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+// const Sidebar: React.FC<{ onSelect: (section: string) => void }> = ({ onSelect }) => {
+//   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
 
-  const toggleAccountMenu = () => {
-    setIsAccountMenuOpen((prev) => !prev);
-  };
+//   const toggleAccountMenu = () => {
+//     setIsAccountMenuOpen((prev) => !prev);
+//   };
 
-  const sections = [
-    { name: "Inbox", icon: <FaInbox />, count: 2 },
-    { name: "Drafts", icon: <FaEnvelopeOpenText /> },
-    { name: "Sent", icon: <FaRegPaperPlane /> },
-    { name: "Junk", icon: <FaTrashAlt />},
-    { name: "Archive", icon: <FaFolderOpen /> },
-    { name: "Social", icon: <FaUserFriends />, count: 3 },
-  ];
+//   const sections = [
+//     { name: "Inbox", icon: <FaInbox />, count: 2 },
+//     { name: "Drafts", icon: <FaEnvelopeOpenText /> },
+//     { name: "Sent", icon: <FaRegPaperPlane /> },
+//     { name: "Junk", icon: <FaTrashAlt />},
+//     { name: "Archive", icon: <FaFolderOpen /> },
+//     { name: "Social", icon: <FaUserFriends />, count: 3 },
+//   ];
 
-  return (
-    <div className="main-container">
-      <div className={`sidebar ${isAccountMenuOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <h1 className="app-title">I-Send</h1>
-        </div>
+//   return (
+//     <div className="main-container">
+//       <div className={`sidebar ${isAccountMenuOpen ? "open" : ""}`}>
+//         <div className="sidebar-header">
+//           <h1 className="app-title">I-Send</h1>
+//         </div>
 
-        <nav className="sidebar-nav">
-          <ul>
-            {sections.map((section) => (
-              <li
-                key={section.name}
-                className="sidebar-item"
-                onClick={() => onSelect(section.name)}
-              >
-                <a href="#" className="sidebar-link">
-                  <div className="icon">{section.icon}</div>
-                  <span>{section.name}</span>
-                  {section.count !== undefined && (
-                    <span className="count">{section.count}</span>
-                  )}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+//         <nav className="sidebar-nav">
+//           <ul>
+//             {sections.map((section) => (
+//               <li
+//                 key={section.name}
+//                 className="sidebar-item"
+//                 onClick={() => onSelect(section.name)}
+//               >
+//                 <a href="#" className="sidebar-link">
+//                   <div className="icon">{section.icon}</div>
+//                   <span>{section.name}</span>
+//                   {section.count !== undefined && (
+//                     <span className="count">{section.count}</span>
+//                   )}
+//                 </a>
+//               </li>
+//             ))}
+//           </ul>
+//         </nav>
 
-        {/* User Account Section */}
-        <div className="sidebar-account">
-          <div className="user-profile" onClick={toggleAccountMenu}>
-            <div className="account-info">
-              <p className="username">John Doe</p>
-              <p className="email">johndoe@example.com</p>
-            </div>
-            <FaChevronDown className={`chevron ${isAccountMenuOpen ? "open" : ""}`} />
-          </div>
-          {isAccountMenuOpen && (
-            <div className="account-dropdown">
-              <div className="account-header">
-                <div className="avatar-large">JD</div>
-                <div>
-                  <p className="username">John Doe</p>
-                  <p className="email">johndoe@example.com</p>
-                </div>
-              </div>
-              <ul className="account-options">
-                <li>
-                  <i className="fa-solid fa-star icon"></i> Upgrade to Pro
-                </li>
-                <li>
-                  <i className="fa-solid fa-user icon"></i> Profile
-                </li>
-                <li>
-                  <i className="fa-solid fa-gear icon"></i> Settings
-                </li>
-                <li>
-                  <i className="fa-solid fa-sign-out-alt icon"></i> Log out
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+//         {/* User Account Section */}
+//         <div className="sidebar-account">
+//           <div className="user-profile" onClick={toggleAccountMenu}>
+//             <div className="account-info">
+//               <p className="username">John Doe</p>
+//               <p className="email">johndoe@example.com</p>
+//             </div>
+//             <FaChevronDown className={`chevron ${isAccountMenuOpen ? "open" : ""}`} />
+//           </div>
+//           {isAccountMenuOpen && (
+//             <div className="account-dropdown">
+//               <div className="account-header">
+//                 <div className="avatar-large">JD</div>
+//                 <div>
+//                   <p className="username">John Doe</p>
+//                   <p className="email">johndoe@example.com</p>
+//                 </div>
+//               </div>
+//               <ul className="account-options">
+//                 <li>
+//                   <i className="fa-solid fa-star icon"></i> Upgrade to Pro
+//                 </li>
+//                 <li>
+//                   <i className="fa-solid fa-user icon"></i> Profile
+//                 </li>
+//                 <li>
+//                   <i className="fa-solid fa-gear icon"></i> Settings
+//                 </li>
+//                 <li>
+//                   <i className="fa-solid fa-sign-out-alt icon"></i> Log out
+//                 </li>
+//               </ul>
+//             </div>
+//           )}
+//         </div>
+//       </div>
 
-      <div className="content">
-        {/* Content Section */}
-      </div>
-    </div>
-  );
-};
+//       <div className="content">
+//         {/* Content Section */}
+//       </div>
+//     </div>
+//   );
+// };
 
 interface SectionProps {
   section: string;
@@ -478,134 +482,148 @@ export default function ChatBotPage() {
   };  
   
   return (
-    <div className="chat-app">
-      <Sidebar onSelect={(section) => setSelectedSection(section)} />
-      <div className="inbox-and-chat-container">
-        <ContentSection section={selectedSection} />
-        <div className="chat-container">
-          <header className="chat-header">What can I help with?</header>
-          <div className="messages">
-            {messages.length === 0 ? (
-              <div className="instructions">
-                <p>Welcome to I-Send!</p>
-                <p>Here's how you can use this chatbot:</p>
-                <ul>
-                  <li>Type <b>hello</b> to start the conversation.</li>
-                  <li>Ask for <b>help</b> to get assistance.</li>
-                  <li>Say <b>bye</b> to end the chat.</li>
-                </ul>
-                <p>Start typing in the text box below to begin!</p>
+    <div className="chat-app bg-zinc-900">
+      <SidebarProvider>
+        <AppSidebar />
+        <main className="w-full bg-zinc-900">
+          <PageHeader />
+          <div className="content bg-zinc-900">
+            {/* Main content container */}
+            <div className="flex w-full gap-4 px-4 pb-4 bg-zinc-900 h-[calc(100vh-4rem)]">
+              {/* Content Section */}
+              <div className="w-1/3 bg-zinc-900 h-full">
+                <ContentSection section={selectedSection} />
               </div>
-            ) : (
-              messages.map((msg, idx) => (
-                <div key={idx} className={`message ${msg.sender}`}>
-                  {msg.text}
+              
+              {/* Chat Container */}
+              <div className="w-2/3 bg-zinc-900 h-full">
+                <div className="chat-container h-full">
+                  <header className="chat-header">What can I help with?</header>
+                  <div className="messages">
+                    {messages.length === 0 ? (
+                      <div className="instructions">
+                        <p>Welcome to I-Send!</p>
+                        <p>Here's how you can use this chatbot:</p>
+                        <ul>
+                          <li>Type <b>hello</b> to start the conversation.</li>
+                          <li>Ask for <b>help</b> to get assistance.</li>
+                          <li>Say <b>bye</b> to end the chat.</li>
+                        </ul>
+                        <p>Start typing in the text box below to begin!</p>
+                      </div>
+                    ) : (
+                      messages.map((msg, idx) => (
+                        <div key={idx} className={`message ${msg.sender}`}>
+                          {msg.text}
+                        </div>
+                      ))
+                    )}
+                    {isTyping && (
+                      <div className="message bot typing-bubble">
+                        <div className="typing-indicator">
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+  
+                  <div className="buttons-container">
+                    <input type="file" onChange={handleFileChange} disabled={isUploading}/>
+  
+                    {/* Display Upload Progress */}
+                    {isUploading && <p>Uploading your file, please wait...</p>}
+  
+                    {/* Display Error Message */}
+                    {error && (
+                      <div style={{ marginTop: '20px', color: 'red' }}>
+                        <p>Error: {error}</p>
+                      </div>
+                    )}
+                  </div>
+  
+                  <div className="buttons-container">
+                    <button className="action-button" onClick={handleUpload} disabled={!file || isUploading}>
+                      {isUploading ? 'Uploading...' : 'Upload Files'}
+                    </button>
+                    <button className="action-button" onClick={() => openModal("retrieve")}>Access Files</button>
+                    <button className="action-button" onClick={() => openModal("grant")}>Share Files</button>
+                    <button className="action-button" onClick={() => openModal("revoke")}>Remove Access</button>
+                    <button className="action-button" onClick={handleVoiceInput}>
+                      {isListening ? "Listening..." : "🎙️ Voice Input"}
+                    </button>
+                  </div>
+                  
+                  <div className="input-container">
+                    <textarea
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Message I-Send"
+                      className="Textarea"
+                    />
+                    <button onClick={handleSend} className="send-button">Send</button>
+                  </div>
                 </div>
-              ))
-            )}
-            {isTyping && (
-              <div className="message bot typing-bubble">
-                <div className="typing-indicator">
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="buttons-container">
-          <input type="file" onChange={handleFileChange} disabled={isUploading}/>
-
-            {/* Display Upload Progress */}
-            {isUploading && <p>Uploading your file, please wait...</p>}
-
-            {/* Display Error Message */}
-            {error && (
-              <div style={{ marginTop: '20px', color: 'red' }}>
-                <p>Error: {error}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="buttons-container">
-            <button className="action-button" onClick={handleUpload} disabled={!file || isUploading}>
-              {isUploading ? 'Uploading...' : 'Upload Files'}
-            </button>
-            <button className="action-button" onClick={() => openModal("retrieve")}>Access Files</button>
-            <button className="action-button" onClick={() => openModal("grant")}>Share Files</button>
-            <button className="action-button" onClick={() => openModal("revoke")}>Remove Access</button>
-            <button className="action-button" onClick={handleVoiceInput}>
-              {isListening ? "Listening..." : "🎙️ Voice Input"}
-            </button>
-          </div>
-          
-          <div className="input-container">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Message I-Send"
-              className="Textarea"
-            />
-            <button onClick={handleSend} className="send-button">Send</button>
-          </div>
-          
-          {/* Modal */}
-          <ReactModal
-            isOpen={modalOpen}
-            onRequestClose={closeModal}
-            contentLabel="Input Details"
-            ariaHideApp={false}
-            className="custom-modal"
-          >
-            <h2>{modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}</h2>
-            <div>
-              <label>
-                Block ID:
-                <input
-                  type="number"
-                  value={blockId || ""}
-                  onChange={(e) => setBlockId(parseInt(e.target.value))}
-                  required
-                />
-              </label>
-              {modalPurpose !== "retrieve" && (
-                <label>
-                  User Address:
-                  <input
-                    type="text"
-                    value={userAddress}
-                    onChange={(e) => setUserAddress(e.target.value)}
-                    required
-                  />
-                </label>
-              )}
-              <div className="modal-buttons">
-                <button onClick={closeModal}>Cancel</button>
-                <button
-                  onClick={async () => {
-                    if (modalPurpose === "retrieve" && blockId !== null) {
-                      await handleRetrieveMetadata(blockId);
-                    } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
-                      await handleGrantAccess(blockId, userAddress);
-                    } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
-                      await handleRevokeAccess(blockId, userAddress);
-                    }
-                    closeModal();
-                  }}
-                >
-                  Submit
-                </button>
               </div>
             </div>
-          </ReactModal>
-
-          {/* Toast Notifications */}
-          <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
-
+          </div>
+        </main>
+      </SidebarProvider>
+  
+      {/* Modal */}
+      <ReactModal
+        isOpen={modalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Input Details"
+        ariaHideApp={false}
+        className="custom-modal"
+      >
+        <h2>{modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}</h2>
+        <div>
+          <label>
+            Block ID:
+            <input
+              type="number"
+              value={blockId || ""}
+              onChange={(e) => setBlockId(parseInt(e.target.value))}
+              required
+            />
+          </label>
+          {modalPurpose !== "retrieve" && (
+            <label>
+              User Address:
+              <input
+                type="text"
+                value={userAddress}
+                onChange={(e) => setUserAddress(e.target.value)}
+                required
+              />
+            </label>
+          )}
+          <div className="modal-buttons">
+            <button onClick={closeModal}>Cancel</button>
+            <button
+              onClick={async () => {
+                if (modalPurpose === "retrieve" && blockId !== null) {
+                  await handleRetrieveMetadata(blockId);
+                } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
+                  await handleGrantAccess(blockId, userAddress);
+                } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
+                  await handleRevokeAccess(blockId, userAddress);
+                }
+                closeModal();
+              }}
+            >
+              Submit
+            </button>
+          </div>
         </div>
-      </div>
+      </ReactModal>
+  
+      {/* Toast Notifications */}
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
   );
 }
