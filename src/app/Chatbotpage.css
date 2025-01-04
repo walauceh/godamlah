@@ -34,22 +34,20 @@
   height: 100vh;
 } */
 
-/* .sidebar-header {
+.sidebar-header {
   text-align: center;
-  margin-bottom: 20px;
-} */
+}
 
 .app-title {
   font-family: 'Roboto', sans-serif;
   font-size: 24px;
   font-weight: bold;
   background: linear-gradient(90deg, #6a11cb, #2575fc);
-  /* -webkit-background-clip: text; */
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin: 0;
-  margin-bottom: 20px;
 }
 
 

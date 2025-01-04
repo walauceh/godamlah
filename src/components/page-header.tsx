@@ -11,6 +11,9 @@ export function PageHeader() {
   return (
     <header className="flex items-center justify-between py-4 px-6 bg-sidebar-primary text-sidebar-foreground shadow w-full">
       <div className="flex items-center space-x-4 flex-1">
+      <div className="sidebar-header">
+          <h1 className="app-title">I-Send</h1>
+        </div>
         <div className="flex-1 relative">
           <div className="relative">
             <input
