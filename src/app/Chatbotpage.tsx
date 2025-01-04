@@ -482,34 +482,32 @@ export default function ChatBotPage() {
   };  
   
   return (
-    <div className="chat-app bg-zinc-900">
+    <div className="chat-app bg-[#00001c]">
       <SidebarProvider>
         <AppSidebar />
-        <main className="w-full bg-zinc-900">
+        <main className="w-full bg-[#00001c]">
           <PageHeader />
-          <div className="content bg-zinc-900">
+          <div className="content bg-[#00001c]">
             {/* Main content container */}
-            <div className="flex w-full gap-4 px-4 pb-4 bg-zinc-900 h-[calc(100vh-4rem)]">
+            <div className="flex w-full gap-4 px-4 pb-4 bg-[#00001c] h-[calc(100vh-4rem)]">
               {/* Content Section */}
-              <div className="w-1/3 bg-zinc-900 h-full">
+              <div className="w-1/3 bg-[#00001c] h-full">
                 <ContentSection section={selectedSection} />
               </div>
               
               {/* Chat Container */}
-              <div className="w-2/3 bg-zinc-900 h-full">
+              <div className="w-2/3 bg-[#00001c] h-full">
                 <div className="chat-container h-full">
-                  <header className="chat-header">What can I help with?</header>
+                  {/* Conditional header */}
+                  {messages.length === 0 && (
+                    <div className="chat-header-center">
+                      <p>What can I help with?</p>
+                    </div>
+                  )}
                   <div className="messages">
                     {messages.length === 0 ? (
-                      <div className="instructions">
-                        <p>Welcome to I-Send!</p>
-                        <p>Here's how you can use this chatbot:</p>
-                        <ul>
-                          <li>Type <b>hello</b> to start the conversation.</li>
-                          <li>Ask for <b>help</b> to get assistance.</li>
-                          <li>Say <b>bye</b> to end the chat.</li>
-                        </ul>
-                        <p>Start typing in the text box below to begin!</p>
+                      <div className="empty-messages">
+                        {/* You can leave this empty or customize it further */}
                       </div>
                     ) : (
                       messages.map((msg, idx) => (
@@ -529,32 +527,6 @@ export default function ChatBotPage() {
                     )}
                   </div>
   
-                  <div className="buttons-container">
-                    <input type="file" onChange={handleFileChange} disabled={isUploading}/>
-  
-                    {/* Display Upload Progress */}
-                    {isUploading && <p>Uploading your file, please wait...</p>}
-  
-                    {/* Display Error Message */}
-                    {error && (
-                      <div style={{ marginTop: '20px', color: 'red' }}>
-                        <p>Error: {error}</p>
-                      </div>
-                    )}
-                  </div>
-  
-                  <div className="buttons-container">
-                    <button className="action-button" onClick={handleUpload} disabled={!file || isUploading}>
-                      {isUploading ? 'Uploading...' : 'Upload Files'}
-                    </button>
-                    <button className="action-button" onClick={() => openModal("retrieve")}>Access Files</button>
-                    <button className="action-button" onClick={() => openModal("grant")}>Share Files</button>
-                    <button className="action-button" onClick={() => openModal("revoke")}>Remove Access</button>
-                    <button className="action-button" onClick={handleVoiceInput}>
-                      {isListening ? "Listening..." : "🎙️ Voice Input"}
-                    </button>
-                  </div>
-                  
                   <div className="input-container">
                     <textarea
                       value={input}
@@ -564,6 +536,77 @@ export default function ChatBotPage() {
                       className="Textarea"
                     />
                     <button onClick={handleSend} className="send-button">Send</button>
+                  </div>
+  
+                  {/* Action Buttons Below Message Input */}
+                  <div className="buttons-container flex gap-4 justify-center mt-4">
+                    {/* Choose File Button */}
+                    <label htmlFor="file-upload" title="Choose Files">
+                      <i className="fas fa-upload text-white text-2xl cursor-pointer"></i>
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      onChange={handleFileChange}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+  
+                    {/* Upload Files Button */}
+                    {isUploading && <p className="text-white">Uploading your file, please wait...</p>}
+  
+                    {/* Display Error Message */}
+                    {error && (
+                      <div style={{ marginTop: '20px', color: 'red' }}>
+                        <p>Error: {error}</p>
+                      </div>
+                    )}
+  
+                    {/* Upload Progress */}
+                    <button
+                      className="action-button"
+                      onClick={handleUpload}
+                      disabled={!file || isUploading}
+                      title="Upload Files"
+                    >
+                      <i className="fas fa-cloud-upload-alt text-white text-2xl"></i>
+                    </button>
+  
+                    {/* Access Files Button */}
+                    <button
+                      className="action-button"
+                      onClick={() => openModal("retrieve")}
+                      title="Access Files"
+                    >
+                      <i className="fas fa-folder-open text-white text-2xl"></i>
+                    </button>
+  
+                    {/* Share Files Button */}
+                    <button
+                      className="action-button"
+                      onClick={() => openModal("grant")}
+                      title="Share Files"
+                    >
+                      <i className="fas fa-share-alt text-white text-2xl"></i>
+                    </button>
+  
+                    {/* Revoke Access Button */}
+                    <button
+                      className="action-button"
+                      onClick={() => openModal("revoke")}
+                      title="Remove Access"
+                    >
+                      <i className="fas fa-times-circle text-white text-2xl"></i>
+                    </button>
+  
+                    {/* Voice Input Button */}
+                    <button
+                      className="action-button"
+                      onClick={handleVoiceInput}
+                      title={isListening ? "Listening..." : "Voice Input"}
+                    >
+                      <i className={`fas fa-microphone text-white text-2xl ${isListening ? 'animate-pulse' : ''}`}></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -626,4 +669,6 @@ export default function ChatBotPage() {
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
   );
+  
+  
 }

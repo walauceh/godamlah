@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import { LoginForm } from "@/components/login-form";
 import { Search } from "lucide-react";
@@ -9,9 +9,9 @@ export function PageHeader() {
   const [showLogin, setShowLogin] = useState(false);
 
   return (
-    <header className="flex items-center justify-between py-4 px-6 bg-sidebar-primary text-sidebar-foreground shadow w-full">
+    <header className="flex items-center justify-between py-4 px-6 bg-[#00001c] text-sidebar-foreground shadow w-full">
       <div className="flex items-center space-x-4 flex-1">
-      <div className="sidebar-header">
+        <div className="sidebar-header">
           <h1 className="app-title">I-Send</h1>
         </div>
         <div className="flex-1 relative">
@@ -28,15 +28,18 @@ export function PageHeader() {
         </div>
       </div>
       <div className="flex items-center space-x-4">
-        <button className="px-4 py-2 rounded text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none focus:ring-2 focus:ring-sidebar-ring">
-          Sign up
+      <button
+        className="px-4 py-2 rounded hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-300 text-white hover:bg-gradient-to-r hover:from-[#1b08aa] hover:to-[#0479d0]"
+        >
+        Sign up
         </button>
         <button
-          onClick={() => setShowLogin(true)}
-          className="px-4 py-2 rounded text-sidebar-foreground hover:bg-sidebar-accent focus:outline-none focus:ring-2 focus:ring-sidebar-ring"
+        className="px-4 py-2 rounded hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-300 text-white hover:bg-gradient-to-r hover:from-[#1b08aa] hover:to-[#0479d0]"
+        onClick={() => setShowLogin(true)}
         >
-          Log in
+        Log in
         </button>
+
       </div>
       {showLogin && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
