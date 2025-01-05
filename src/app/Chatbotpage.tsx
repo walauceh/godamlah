@@ -4,7 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PageHeader } from "@/components/page-header";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Chatbotpage.css";
@@ -480,6 +480,52 @@ export default function ChatBotPage() {
       console.error('Error revoking access:', error);
     }
   };  
+
+  const [gradientAngle, setGradientAngle] = useState(50);
+  const [showLogin, setShowLogin] = useState(false);
+  // Add HTMLParagraphElement type to the ref
+  const titleRef = useRef<HTMLParagraphElement | null>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!titleRef.current) return;
+      
+      // Get the title element's bounds
+      const titleBounds = titleRef.current.getBoundingClientRect();
+      
+      // Calculate mouse position relative to the title element
+      const x = e.clientX - titleBounds.left;
+      const elementWidth = titleBounds.width;
+      
+      // Only update if mouse is within or near the title
+      if (Math.abs(e.clientY - titleBounds.top) < 100 && 
+          x >= -50 && x <= elementWidth + 50) {
+        const newAngle = (x / elementWidth) * 360;
+        
+        const animate = () => {
+          setGradientAngle(prev => {
+            const diff = newAngle - prev;
+            if (Math.abs(diff) < 1) return newAngle;
+            return prev + diff * 0.1;
+          });
+        };
+        
+        requestAnimationFrame(animate);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const titleStyle = {
+    backgroundImage: `linear-gradient(${gradientAngle}deg, #6a11cb, #2575fc)`,
+    backgroundClip: 'text',
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+    transition: 'background-image 0.1s ease-out'
+  };
+
   
   return (
     <div className="chat-app bg-[#00001c]">
@@ -501,8 +547,10 @@ export default function ChatBotPage() {
                   {/* Conditional header */}
                   {messages.length === 0 && (
                     <div className="chat-header-center">
-                      <p>What can I help with?</p>
-                    </div>
+                    <p ref={titleRef} style={titleStyle}>
+                      What can I help with?
+                    </p>
+                  </div>
                   )}
                   <div className="messages">
                     {messages.length === 0 ? (
@@ -527,87 +575,109 @@ export default function ChatBotPage() {
                     )}
                   </div>
   
-                  <div className="input-container">
+                  <div className="message-input-container flex items-center relative">
+                    {/* Text Input Area */}
                     <textarea
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={handleKeyDown}
+                      className="w-full h-12 p-2 pr-20 bg-transparent border rounded-md text-white"
                       placeholder="Message I-Send"
-                      className="Textarea"
-                    />
-                    <button onClick={handleSend} className="send-button">Send</button>
+                    ></textarea>
+
+                    {/* Voice Input Button */}
+                    <button
+                      className={`absolute right-10 top-2 text-white text-xl ${
+                        isListening ? "animate-pulse" : ""
+                      }`}
+                      onClick={handleVoiceInput}
+                      title={isListening ? "Listening..." : "Voice Input"}
+                    >
+                      <i className="fas fa-microphone"></i>
+                    </button>
+
+                    {/* Send Button */}
+                    <button
+                      className="absolute right-2 top-2 text-white text-xl"
+                      onClick={handleSend}
+                      title="Send Message"
+                    >
+                      <i className="fas fa-paper-plane"></i>
+                    </button>
                   </div>
   
                   {/* Action Buttons Below Message Input */}
                   <div className="buttons-container flex gap-4 justify-center mt-4">
                     {/* Choose File Button */}
-                    <label htmlFor="file-upload" title="Choose Files">
-                      <i className="fas fa-upload text-white text-2xl cursor-pointer"></i>
-                    </label>
-                    <input
-                      id="file-upload"
-                      type="file"
-                      onChange={handleFileChange}
-                      disabled={isUploading}
-                      className="hidden"
-                    />
-  
+                    <div className="flex flex-col items-center">
+                      <label
+                        htmlFor="file-upload"
+                        className="action-button flex flex-col items-center text-white text-sm"
+                        title="Choose Files"
+                      >
+                        <i className="fas fa-upload text-2xl mb-1"></i>
+                        Choose Files
+                      </label>
+                      <input
+                        id="file-upload"
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={isUploading}
+                        className="hidden"
+                      />
+                    </div>
+
                     {/* Upload Files Button */}
-                    {isUploading && <p className="text-white">Uploading your file, please wait...</p>}
-  
-                    {/* Display Error Message */}
-                    {error && (
-                      <div style={{ marginTop: '20px', color: 'red' }}>
-                        <p>Error: {error}</p>
-                      </div>
-                    )}
-  
-                    {/* Upload Progress */}
-                    <button
-                      className="action-button"
-                      onClick={handleUpload}
-                      disabled={!file || isUploading}
-                      title="Upload Files"
-                    >
-                      <i className="fas fa-cloud-upload-alt text-white text-2xl"></i>
-                    </button>
-  
+                    <div className="flex flex-col items-center">
+                      <button
+                        className="action-button flex flex-col items-center text-white text-sm"
+                        onClick={handleUpload}
+                        disabled={!file || isUploading}
+                        title="Upload Files"
+                      >
+                        <i className="fas fa-cloud-upload-alt text-2xl mb-1"></i>
+                        Upload Files
+                      </button>
+                      {isUploading && (
+                        <p className="text-white text-xs mt-1">Uploading your file...</p>
+                      )}
+                    </div>
+
                     {/* Access Files Button */}
-                    <button
-                      className="action-button"
-                      onClick={() => openModal("retrieve")}
-                      title="Access Files"
-                    >
-                      <i className="fas fa-folder-open text-white text-2xl"></i>
-                    </button>
-  
+                    <div className="flex flex-col items-center">
+                      <button
+                        className="action-button flex flex-col items-center text-white text-sm"
+                        onClick={() => openModal("retrieve")}
+                        title="Access Files"
+                      >
+                        <i className="fas fa-folder-open text-2xl mb-1"></i>
+                        Access Files
+                      </button>
+                    </div>
+
                     {/* Share Files Button */}
-                    <button
-                      className="action-button"
-                      onClick={() => openModal("grant")}
-                      title="Share Files"
-                    >
-                      <i className="fas fa-share-alt text-white text-2xl"></i>
-                    </button>
-  
+                    <div className="flex flex-col items-center">
+                      <button
+                        className="action-button flex flex-col items-center text-white text-sm"
+                        onClick={() => openModal("grant")}
+                        title="Share Files"
+                      >
+                        <i className="fas fa-share-alt text-2xl mb-1"></i>
+                        Share Files
+                      </button>
+                    </div>
+
                     {/* Revoke Access Button */}
-                    <button
-                      className="action-button"
-                      onClick={() => openModal("revoke")}
-                      title="Remove Access"
-                    >
-                      <i className="fas fa-times-circle text-white text-2xl"></i>
-                    </button>
-  
-                    {/* Voice Input Button */}
-                    <button
-                      className="action-button"
-                      onClick={handleVoiceInput}
-                      title={isListening ? "Listening..." : "Voice Input"}
-                    >
-                      <i className={`fas fa-microphone text-white text-2xl ${isListening ? 'animate-pulse' : ''}`}></i>
-                    </button>
+                    <div className="flex flex-col items-center">
+                      <button
+                        className="action-button flex flex-col items-center text-white text-sm"
+                        onClick={() => openModal("revoke")}
+                        title="Remove Access"
+                      >
+                        <i className="fas fa-times-circle text-2xl mb-1"></i>
+                        Remove Access
+                      </button>
+                    </div>
                   </div>
+
+                  
                 </div>
               </div>
             </div>
@@ -669,6 +739,5 @@ export default function ChatBotPage() {
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
   );
-  
-  
+
 }

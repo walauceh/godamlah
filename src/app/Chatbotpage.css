@@ -13,7 +13,6 @@
 }
 
 
-
 /* General Chat App Styling */
 .chat-app {
   display: flex;
@@ -439,8 +438,9 @@
   display: flex;
   align-items: center;
   background-color: #00001c;
-  padding: 12px 20px;
+  padding: 12px 5px;
   border-top: 1px solid #333;
+  /* margin-right: 10px; */
 }
 
 .Textarea {
@@ -452,6 +452,7 @@
   border-radius: 5px;
   font-size: 14px;
   resize: none;
+  margin-right: 10px;
 }
 
 .Textarea::placeholder {
@@ -868,10 +869,7 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  font-size: 1.5rem;
-  color: white;
+  font-size: 3.5rem;
+  font-weight: bold;
 }
-
-
-
 
