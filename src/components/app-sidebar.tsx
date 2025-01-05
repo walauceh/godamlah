@@ -1,6 +1,7 @@
-import { Box, Calendar, Inbox, Send, User } from "lucide-react"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-
+// app-sidebar.tsx
+import { Box, Calendar, Inbox, Send, User } from "lucide-react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useNavigation } from '@/components/NavigationContext';
 import {
   Sidebar,
   SidebarContent,
@@ -9,38 +10,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-// Menu items with updated icons based on titles
 const items = [
-  {
-    title: "Inbox",
-    url: "/",
-    icon: Inbox, 
-  },
-  {
-    title: "Sent",
-    url: "/",
-    icon: Send, 
-  },
-  {
-    title: "Schedule",
-    url: "/",
-    icon: Calendar, 
-  },
-  {
-    title: "Archive",
-    url: "/",
-    icon: Box,
-  },
-  {
-    title: "Social",
-    url: "/",
-    icon: User, 
-  },
-]
+  { title: "Inbox", icon: Inbox, id: 'inbox' },
+  { title: "Sent", icon: Send, id: 'sent' },
+  { title: "Schedule", icon: Calendar, id: 'schedule' },
+  { title: "Archive", icon: Box, id: 'archive' },
+  { title: "Social", icon: User, id: 'social' }
+];
 
 export function AppSidebar() {
+  const { setCurrentSection } = useNavigation();
+  
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -50,11 +32,12 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title} className="sidebar-menu-item">
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
+                  <SidebarMenuButton 
+                    onClick={() => setCurrentSection(item.id)}
+                    className="w-full"
+                  >
+                    <item.icon />
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -63,5 +46,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

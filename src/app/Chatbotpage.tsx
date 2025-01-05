@@ -3,7 +3,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PageHeader } from "@/components/page-header";
-
 import { JSX, useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,8 +12,11 @@ import ReactModal from "react-modal";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { encryptCID, decryptCID } from "../utils/encryption";
 import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/contract";
+import { useNavigation } from '@/components/NavigationContext';
+import { NavigationProvider } from '@/components/NavigationContext';
 
-const ContentSection = () => {
+// Content components for each section
+const InboxContent = () => {
   const inboxData = [
     {
       sender: "William Smith",
@@ -30,30 +32,86 @@ const ContentSection = () => {
       time: "about 1 year ago",
       tags: ["work", "important"]
     },
-    {
-      sender: "Bob Johnson",
-      subject: "Weekend Plans",
-      preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
-      time: "over 1 year ago",
-      tags: ["personal"]
-    },
-    {
-      sender: "Emily Davis",
-      online: true,
-      subject: "Re: Question about Budget",
-      preview: "I have a question about the budget for the upcoming project. It seems like there's a discrepancy in the allocation of resources. I've reviewed the...",
-      time: "almost 2 years ago",
-      tags: ["work", "budget"]
-    },
-    {
-      sender: "Michael Wilson",
-      online: true,
-      subject: "Important Announcement",
-      preview: "I have an important announcement to make during our team meeting. It pertains to a strategic shift in our upcoming product launc...",
-      time: "almost 2 years ago",
-      tags: ["work", "announcement"]
-    }
+    // ... rest of your inbox data
   ];
+
+  return (
+    <div className="flex-1 overflow-y-auto">
+      {inboxData.map((email, index) => (
+        <div key={index} className="p-4 border-b border-gray-800 hover:bg-gray-900/50 cursor-pointer">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-white">{email.sender}</span>
+            
+            </div>
+            <span className="text-sm text-gray-500">{email.time}</span>
+          </div>
+          <h3 className="font-medium text-white mb-2">{email.subject}</h3>
+          <p className="text-sm text-gray-400 mb-3">{email.preview}</p>
+          <div className="flex gap-2">
+            {email.tags.map((tag, tagIndex) => (
+              <span 
+                key={tagIndex}
+                className={`px-3 py-1 rounded-full text-sm ${tag === 'work' ? 'text-white' : 'text-gray-300'}`}
+                style={{ backgroundColor: tag === 'work' ? 'hsl(225, 50%, 25%)' : '#1f2937' }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const SentContent = () => (
+  <div className="p-4">
+    <h2 className="text-xl font-bold text-white mb-4">Sent Messages</h2>
+    <div className="text-gray-300">Your sent messages will appear here...</div>
+  </div>
+);
+
+const ScheduleContent = () => (
+  <div className="p-4">
+    <h2 className="text-xl font-bold text-white mb-4">Schedule</h2>
+    <div className="text-gray-300">Your calendar and scheduled events will appear here...</div>
+  </div>
+);
+
+const ArchiveContent = () => (
+  <div className="p-4">
+    <h2 className="text-xl font-bold text-white mb-4">Archive</h2>
+    <div className="text-gray-300">Your archived messages will appear here...</div>
+  </div>
+);
+
+const SocialContent = () => (
+  <div className="p-4">
+    <h2 className="text-xl font-bold text-white mb-4">Social</h2>
+    <div className="text-gray-300">Your social messages will appear here...</div>
+  </div>
+);
+
+export const ContentSection = () => {
+  const { currentSection } = useNavigation();
+
+  const renderContent = () => {
+    switch (currentSection) {
+      case 'inbox':
+        return <InboxContent />;
+      case 'sent':
+        return <SentContent />;
+      case 'schedule':
+        return <ScheduleContent />;
+      case 'archive':
+        return <ArchiveContent />;
+      case 'social':
+        return <SocialContent />;
+      default:
+        return <InboxContent />;
+    }
+  };
 
   return (
     <div 
@@ -63,7 +121,9 @@ const ContentSection = () => {
       {/* Header */}
       <div className="p-4 border-b border-gray-800">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-white">Inbox</h1>
+          <h1 className="text-2xl font-bold text-white">
+            {currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}
+          </h1>
           <div className="flex gap-2">
             <button className="px-4 py-1 rounded-full bg-gray-900 hover:bg-gray-800 text-sm">
               All mail
@@ -97,42 +157,8 @@ const ContentSection = () => {
         </div>
       </div>
 
-      {/* Scrollable Email List */}
-      <div className="flex-1 overflow-y-auto">
-        {inboxData.map((email, index) => (
-          <div 
-            key={index} 
-            className="p-4 border-b border-gray-800 hover:bg-gray-900/50 cursor-pointer"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-white">{email.sender}</span>
-                {email.online && (
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                )}
-              </div>
-              <span className="text-sm text-gray-500">{email.time}</span>
-            </div>
-            <h3 className="font-medium text-white mb-2">{email.subject}</h3>
-            <p className="text-sm text-gray-400 mb-3">{email.preview}</p>
-            <div className="flex gap-2">
-              {email.tags.map((tag, tagIndex) => (
-                <span 
-                  key={tagIndex}
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    tag === 'work' ? 'text-white' : 'text-gray-300'
-                  }`}
-                  style={{
-                    backgroundColor: tag === 'work' ? 'hsl(225, 50%, 25%)' : '#1f2937'
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Dynamic Content */}
+      {renderContent()}
     </div>
   );
 };
@@ -396,6 +422,7 @@ export default function ChatBotPage() {
   
   return (
     <div className="chat-app bg-[#00001c]">
+      <NavigationProvider>
       <SidebarProvider>
         <AppSidebar />
         <main className="w-full bg-[#00001c]">
@@ -542,6 +569,7 @@ export default function ChatBotPage() {
           </div>
         </main>
       </SidebarProvider>
+      </NavigationProvider>
   
       {/* Modal */}
       <ReactModal
@@ -597,5 +625,4 @@ export default function ChatBotPage() {
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
   );
-
 }
