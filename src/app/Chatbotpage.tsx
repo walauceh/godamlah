@@ -574,46 +574,30 @@ export default function ChatBotPage() {
                       </div>
                     )}
                   </div>
-  
-                  <div className="message-input-container flex items-center relative">
-                    {/* Text Input Area */}
+
+
+                  <div className="input-container">
                     <textarea
-                      className="w-full h-12 p-2 pr-20 bg-transparent border rounded-md text-white"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
                       placeholder="Message I-Send"
-                    ></textarea>
-
-                    {/* Voice Input Button */}
-                    <button
-                      className={`absolute right-10 top-2 text-white text-xl ${
-                        isListening ? "animate-pulse" : ""
-                      }`}
-                      onClick={handleVoiceInput}
-                      title={isListening ? "Listening..." : "Voice Input"}
-                    >
-                      <i className="fas fa-microphone"></i>
-                    </button>
-
-                    {/* Send Button */}
-                    <button
-                      className="absolute right-2 top-2 text-white text-xl"
-                      onClick={handleSend}
-                      title="Send Message"
-                    >
-                      <i className="fas fa-paper-plane"></i>
-                    </button>
+                      className="Textarea"
+                    />
+                    <button onClick={handleSend} className="send-button">Send</button>
                   </div>
-  
+
                   {/* Action Buttons Below Message Input */}
                   <div className="buttons-container flex gap-4 justify-center mt-4">
                     {/* Choose File Button */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex items-center gap-2">
                       <label
                         htmlFor="file-upload"
-                        className="action-button flex flex-col items-center text-white text-sm"
+                        className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
                         title="Choose Files"
                       >
-                        <i className="fas fa-upload text-2xl mb-1"></i>
-                        Choose Files
+                        <i className="fas fa-upload text-2xl"></i>
+                        <span>Choose Files</span>
                       </label>
                       <input
                         id="file-upload"
@@ -625,59 +609,66 @@ export default function ChatBotPage() {
                     </div>
 
                     {/* Upload Files Button */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex items-center gap-2">
                       <button
-                        className="action-button flex flex-col items-center text-white text-sm"
+                        className="action-button flex items-center gap-2 text-white text-sm"
                         onClick={handleUpload}
                         disabled={!file || isUploading}
                         title="Upload Files"
                       >
-                        <i className="fas fa-cloud-upload-alt text-2xl mb-1"></i>
-                        Upload Files
+                        <i className="fas fa-cloud-upload-alt text-2xl"></i>
+                        <span>Upload</span>
                       </button>
-                      {isUploading && (
-                        <p className="text-white text-xs mt-1">Uploading your file...</p>
-                      )}
                     </div>
 
                     {/* Access Files Button */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex items-center gap-2">
                       <button
-                        className="action-button flex flex-col items-center text-white text-sm"
+                        className="action-button flex items-center gap-2 text-white text-sm"
                         onClick={() => openModal("retrieve")}
                         title="Access Files"
                       >
-                        <i className="fas fa-folder-open text-2xl mb-1"></i>
-                        Access Files
+                        <i className="fas fa-folder-open text-2xl"></i>
+                        <span>Access</span>
                       </button>
                     </div>
 
                     {/* Share Files Button */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex items-center gap-2">
                       <button
-                        className="action-button flex flex-col items-center text-white text-sm"
+                        className="action-button flex items-center gap-2 text-white text-sm"
                         onClick={() => openModal("grant")}
                         title="Share Files"
                       >
-                        <i className="fas fa-share-alt text-2xl mb-1"></i>
-                        Share Files
+                        <i className="fas fa-share-alt text-2xl"></i>
+                        <span>Share</span>
                       </button>
                     </div>
 
                     {/* Revoke Access Button */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex items-center gap-2">
                       <button
-                        className="action-button flex flex-col items-center text-white text-sm"
+                        className="action-button flex items-center gap-2 text-white text-sm"
                         onClick={() => openModal("revoke")}
                         title="Remove Access"
                       >
-                        <i className="fas fa-times-circle text-2xl mb-1"></i>
-                        Remove Access
+                        <i className="fas fa-times-circle text-2xl"></i>
+                        <span>Remove Access</span>
+                      </button>
+                    </div>
+
+                    {/* Voice Input Button */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        className={`action-button flex items-center gap-2 text-white text-xl ${isListening ? "animate-pulse" : ""}`}
+                        onClick={handleVoiceInput}
+                        title={isListening ? "Listening..." : "Voice Input"}
+                      >
+                        <i className="fas fa-microphone"></i>
+                        <span className="text-sm">Voice Input</span>
                       </button>
                     </div>
                   </div>
-
-                  
                 </div>
               </div>
             </div>
