@@ -710,7 +710,7 @@
   width: 200px;
   border-radius: 5px;
   border: none;
-  background-color: #00001c;
+  background-color: #e60000;
   color: #fff;
   font-size: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -727,7 +727,7 @@
 }
 
 .email-item {
-  background-color: #00001c;
+  background-color: #e60000;
   margin-bottom: 15px;
   padding: 15px;
   border-radius: 8px;
@@ -772,7 +772,7 @@
   display: inline-block;
   padding: 5px 10px;
   font-size: 0.85rem;
-  background-color: #00001c;
+  background-color: #e60000;
   color: white;
   border-radius: 15px;
   margin-right: 5px;

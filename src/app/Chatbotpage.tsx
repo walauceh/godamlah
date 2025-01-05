@@ -13,259 +13,126 @@ import ReactModal from "react-modal";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { encryptCID, decryptCID } from "../utils/encryption";
 import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/contract";
-// import {
-//   FaInbox,
-//   FaRegPaperPlane,
-//   FaFolderOpen,
-//   FaTrashAlt,
-//   FaEnvelopeOpenText,
-//   FaUserFriends,
-//   FaCog,
-//   FaSignOutAlt,
-//   FaUser,
-//   FaChevronDown,
-//   FaStar,
-// } from "react-icons/fa";
 
-// const Sidebar: React.FC<{ onSelect: (section: string) => void }> = ({ onSelect }) => {
-//   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-
-//   const toggleAccountMenu = () => {
-//     setIsAccountMenuOpen((prev) => !prev);
-//   };
-
-//   const sections = [
-//     { name: "Inbox", icon: <FaInbox />, count: 2 },
-//     { name: "Drafts", icon: <FaEnvelopeOpenText /> },
-//     { name: "Sent", icon: <FaRegPaperPlane /> },
-//     { name: "Junk", icon: <FaTrashAlt />},
-//     { name: "Archive", icon: <FaFolderOpen /> },
-//     { name: "Social", icon: <FaUserFriends />, count: 3 },
-//   ];
-
-//   return (
-//     <div className="main-container">
-//       <div className={`sidebar ${isAccountMenuOpen ? "open" : ""}`}>
-//         <div className="sidebar-header">
-//           <h1 className="app-title">I-Send</h1>
-//         </div>
-
-//         <nav className="sidebar-nav">
-//           <ul>
-//             {sections.map((section) => (
-//               <li
-//                 key={section.name}
-//                 className="sidebar-item"
-//                 onClick={() => onSelect(section.name)}
-//               >
-//                 <a href="#" className="sidebar-link">
-//                   <div className="icon">{section.icon}</div>
-//                   <span>{section.name}</span>
-//                   {section.count !== undefined && (
-//                     <span className="count">{section.count}</span>
-//                   )}
-//                 </a>
-//               </li>
-//             ))}
-//           </ul>
-//         </nav>
-
-//         {/* User Account Section */}
-//         <div className="sidebar-account">
-//           <div className="user-profile" onClick={toggleAccountMenu}>
-//             <div className="account-info">
-//               <p className="username">John Doe</p>
-//               <p className="email">johndoe@example.com</p>
-//             </div>
-//             <FaChevronDown className={`chevron ${isAccountMenuOpen ? "open" : ""}`} />
-//           </div>
-//           {isAccountMenuOpen && (
-//             <div className="account-dropdown">
-//               <div className="account-header">
-//                 <div className="avatar-large">JD</div>
-//                 <div>
-//                   <p className="username">John Doe</p>
-//                   <p className="email">johndoe@example.com</p>
-//                 </div>
-//               </div>
-//               <ul className="account-options">
-//                 <li>
-//                   <i className="fa-solid fa-star icon"></i> Upgrade to Pro
-//                 </li>
-//                 <li>
-//                   <i className="fa-solid fa-user icon"></i> Profile
-//                 </li>
-//                 <li>
-//                   <i className="fa-solid fa-gear icon"></i> Settings
-//                 </li>
-//                 <li>
-//                   <i className="fa-solid fa-sign-out-alt icon"></i> Log out
-//                 </li>
-//               </ul>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-
-//       <div className="content">
-//         {/* Content Section */}
-//       </div>
-//     </div>
-//   );
-// };
-
-interface SectionProps {
-  section: string;
-}
-
-const ContentSection: React.FC<SectionProps> = ({ section }) => {
+const ContentSection = () => {
   const inboxData = [
     {
       sender: "William Smith",
       subject: "Meeting Tomorrow",
-      versionHistory: [
-        { date: "16 days ago", version: "Completed", user: "Benson" },
-        { date: "Jun 7, 11:57 AM", version: "Ready for dev", user: "Benson" },
-        { date: "Jun 3, 12:10 PM", version: "Updated font properties", user: "Oscar" },
-        { date: "20 days ago", version: "Ready for dev", user: "Oscar" },
-      ]
+      preview: "Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the project details and have some ideas I'd like to share. It's crucial that we...",
+      time: "about 1 year ago",
+      tags: ["meeting", "work", "important"]
     },
     {
       sender: "Alice Smith",
       subject: "Re: Project Update",
-      versionHistory: [
-        { date: "15 days ago", version: "Reviewed and confirmed", user: "Alice" },
-        { date: "Jun 5, 9:30 AM", version: "Initial Draft", user: "Alice" },
-      ]
+      preview: "Thank you for the project update. It looks great! I've gone through the report, and the progress is impressive. The team has done a fantastic job, and I...",
+      time: "about 1 year ago",
+      tags: ["work", "important"]
     },
+    {
+      sender: "Bob Johnson",
+      subject: "Weekend Plans",
+      preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
+      time: "over 1 year ago",
+      tags: ["personal"]
+    },
+    {
+      sender: "Emily Davis",
+      online: true,
+      subject: "Re: Question about Budget",
+      preview: "I have a question about the budget for the upcoming project. It seems like there's a discrepancy in the allocation of resources. I've reviewed the...",
+      time: "almost 2 years ago",
+      tags: ["work", "budget"]
+    },
+    {
+      sender: "Michael Wilson",
+      online: true,
+      subject: "Important Announcement",
+      preview: "I have an important announcement to make during our team meeting. It pertains to a strategic shift in our upcoming product launc...",
+      time: "almost 2 years ago",
+      tags: ["work", "announcement"]
+    }
   ];
 
-  const [popoverVisible, setPopoverVisible] = useState<boolean>(false);
-  const [popoverContent, setPopoverContent] = useState<JSX.Element | string>('');
-  const [popoverPosition, setPopoverPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
-
-  const handleEmailClick = (event: React.MouseEvent<HTMLDivElement>, versionHistory: Array<{ date: string, version: string, user: string }>) => {
-    setPopoverPosition({ top: 0, left: 0 }); // Set to zero since it's no longer position-relative to the element clicked
-
-    // Create version history content
-    const versionHistoryContent = (
-      <div className="version-history-popover">
-        <div className="popover-header">
-          <span>Version history</span>
-          <button className="share-button">Share</button>
-        </div>
-        <div className="version-timeline">
-          {versionHistory.map((entry, index) => (
-            <div key={index} className="version-item">
-              <div className="version-status">
-                <span>{entry.version}</span>
-                <span className="version-user">- {entry.user}</span>
-              </div>
-              <div className="version-date">{entry.date}</div>
-            </div>
-          ))}
-        </div>
-        <div className="show-older">
-          <button>Show older</button>
-        </div>
-        {/* Close button moved inside the popover */}
-        <button className="close-popover" onClick={handleClosePopover}>Close</button>
-      </div>
-    );
-
-    setPopoverContent(versionHistoryContent);
-    setPopoverVisible(true);
-  };
-
-  const handleClosePopover = () => {
-    setPopoverVisible(false);
-  };
-
-  const sections: Record<string, JSX.Element | string> = {
-    Inbox: (
-      <div className="inbox-section">
-        <div className="inbox-header">
-          <h2 className="inbox-title">Inbox</h2>
-          <div className="search-bar">
-            <input type="text" placeholder="Search inbox..." className="search-input" />
-          </div>
-        </div>
-
-        <div className="inbox-content">
-          {inboxData.map((email, index) => (
-            <div key={index} className="email-item" onClick={(e) => handleEmailClick(e, email.versionHistory)}>
-              <div className="email-header">
-                <div className="sender">{email.sender}</div>
-                <div className="subject">{email.subject}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Popover */}
-        {popoverVisible && (
-          <div className="popover">
-            <div className="popover-content">
-              {popoverContent}
-            </div>
-          </div>
-        )}
-      </div>
-    ),
-    Drafts: "Displaying Draft Items...",
-    Sent: "Displaying Sent Items...",
-    Junk: "Displaying Junk Items...",
-    Archive: "Displaying Archive Items...",
-    Social: (
-      <div className="social-content">
-        <div className="social-content">
-          <div className="friend-card">
-            <div className="avatar">O</div>
-            <div className="details">
-              <div className="name">Olivia Martin</div>
-              <div className="email">m@example.com</div>
-            </div>
-            <div className="role">
-              <select defaultValue="Can edit">
-                <option value="Can edit">Can edit</option>
-                <option value="Can view">Can view</option>
-              </select>
-            </div>
-          </div>
-          <div className="friend-card">
-            <div className="avatar">I</div>
-            <div className="details">
-              <div className="name">Isabella Nguyen</div>
-              <div className="email">b@example.com</div>
-            </div>
-            <div className="role">
-              <select defaultValue="Can view">
-                <option value="Can edit">Can edit</option>
-                <option value="Can view">Can view</option>
-              </select>
-            </div>
-          </div>
-          <div className="friend-card">
-            <div className="avatar">S</div>
-            <div className="details">
-              <div className="name">Sofia Davis</div>
-              <div className="email">p@example.com</div>
-            </div>
-            <div className="role">
-              <select defaultValue="Can view">
-                <option value="Can edit">Can edit</option>
-                <option value="Can view">Can view</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-  };
-
   return (
-    <div className="content-section">
-      {sections[section] || <p>Select a section to view content</p>}
+    <div 
+      className="flex flex-col h-screen text-gray-300"
+      style={{ backgroundColor: 'hsl(252, 100.00%, 9.60%)' }}
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-gray-800">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold text-white">Inbox</h1>
+          <div className="flex gap-2">
+            <button className="px-4 py-1 rounded-full bg-gray-900 hover:bg-gray-800 text-sm">
+              All mail
+            </button>
+            <button className="px-4 py-1 rounded-full bg-gray-900 hover:bg-gray-800 text-sm">
+              Unread
+            </button>
+          </div>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="relative">
+          <input 
+            type="text" 
+            placeholder="Search" 
+            className="w-full bg-gray-900 rounded-lg px-4 py-2 pl-10 text-gray-300 placeholder-gray-500"
+          />
+          <svg 
+            className="absolute left-3 top-2.5 h-5 w-5 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* Scrollable Email List */}
+      <div className="flex-1 overflow-y-auto">
+        {inboxData.map((email, index) => (
+          <div 
+            key={index} 
+            className="p-4 border-b border-gray-800 hover:bg-gray-900/50 cursor-pointer"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-white">{email.sender}</span>
+                {email.online && (
+                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                )}
+              </div>
+              <span className="text-sm text-gray-500">{email.time}</span>
+            </div>
+            <h3 className="font-medium text-white mb-2">{email.subject}</h3>
+            <p className="text-sm text-gray-400 mb-3">{email.preview}</p>
+            <div className="flex gap-2">
+              {email.tags.map((tag, tagIndex) => (
+                <span 
+                  key={tagIndex}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    tag === 'work' ? 'text-white' : 'text-gray-300'
+                  }`}
+                  style={{
+                    backgroundColor: tag === 'work' ? 'hsl(225, 50%, 25%)' : '#1f2937'
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -538,7 +405,7 @@ export default function ChatBotPage() {
             <div className="flex w-full gap-4 px-4 pb-4 bg-[#00001c] h-[calc(100vh-4rem)]">
               {/* Content Section */}
               <div className="w-1/3 bg-[#00001c] h-full">
-                <ContentSection section={selectedSection} />
+                <ContentSection/>
               </div>
               
               {/* Chat Container */}
