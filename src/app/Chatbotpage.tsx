@@ -32,7 +32,29 @@ const InboxContent = () => {
       time: "about 1 year ago",
       tags: ["work", "important"]
     },
-    // ... rest of your inbox data
+    {
+      sender: "Bob Johnson",
+      subject: "Weekend Plans",
+      preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
+      time: "over 1 year ago",
+      tags: ["personal"]
+    },
+    {
+      sender: "Emily Davis",
+      online: true,
+      subject: "Re: Question about Budget",
+      preview: "I have a question about the budget for the upcoming project. It seems like there's a discrepancy in the allocation of resources. I've reviewed the...",
+      time: "almost 2 years ago",
+      tags: ["work", "budget"]
+    },
+    {
+      sender: "Michael Wilson",
+      online: true,
+      subject: "Important Announcement",
+      preview: "I have an important announcement to make during our team meeting. It pertains to a strategic shift in our upcoming product launc...",
+      time: "almost 2 years ago",
+      tags: ["work", "announcement"]
+    }
   ];
 
   return (
