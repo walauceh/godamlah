@@ -617,7 +617,7 @@ export default function ChatBotPage() {
                         title="Upload Files"
                       >
                         <i className="fas fa-cloud-upload-alt text-2xl"></i>
-                        <span>Upload</span>
+                        <span>Upload Files</span>
                       </button>
                     </div>
 
@@ -629,7 +629,7 @@ export default function ChatBotPage() {
                         title="Access Files"
                       >
                         <i className="fas fa-folder-open text-2xl"></i>
-                        <span>Access</span>
+                        <span>Access Files</span>
                       </button>
                     </div>
 
@@ -641,7 +641,7 @@ export default function ChatBotPage() {
                         title="Share Files"
                       >
                         <i className="fas fa-share-alt text-2xl"></i>
-                        <span>Share</span>
+                        {/* <span>Share</span> */}
                       </button>
                     </div>
 
@@ -653,7 +653,7 @@ export default function ChatBotPage() {
                         title="Remove Access"
                       >
                         <i className="fas fa-times-circle text-2xl"></i>
-                        <span>Remove Access</span>
+                        {/* <span>Remove Access</span> */}
                       </button>
                     </div>
 
@@ -665,7 +665,7 @@ export default function ChatBotPage() {
                         title={isListening ? "Listening..." : "Voice Input"}
                       >
                         <i className="fas fa-microphone"></i>
-                        <span className="text-sm">Voice Input</span>
+                        {/* <span className="text-sm">Voice Input</span> */}
                       </button>
                     </div>
                   </div>

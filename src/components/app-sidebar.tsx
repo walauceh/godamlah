@@ -1,5 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Box, Calendar, Inbox, Send, User } from "lucide-react"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 
 import {
   Sidebar,
@@ -11,32 +11,32 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-// Menu items.
+// Menu items with updated icons based on titles
 const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
   {
     title: "Inbox",
     url: "/",
-    icon: Inbox,
+    icon: Inbox, 
   },
   {
-    title: "Calendar",
+    title: "Sent",
     url: "/",
-    icon: Calendar,
+    icon: Send, 
   },
   {
-    title: "Search",
+    title: "Schedule",
     url: "/",
-    icon: Search,
+    icon: Calendar, 
   },
   {
-    title: "Settings",
+    title: "Archive",
     url: "/",
-    icon: Settings,
+    icon: Box,
+  },
+  {
+    title: "Social",
+    url: "/",
+    icon: User, 
   },
 ]
 
@@ -49,7 +49,7 @@ export function AppSidebar() {
             <SidebarTrigger />
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="sidebar-menu-item">
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon />
@@ -65,4 +65,3 @@ export function AppSidebar() {
     </Sidebar>
   )
 }
-

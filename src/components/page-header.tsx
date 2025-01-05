@@ -18,7 +18,10 @@ export function PageHeader() {
   };
 
   return (
-    <header className="flex items-center justify-between py-4 px-6 bg-[#00001c] text-sidebar-foreground shadow w-full">
+    <header 
+  className="flex items-center justify-between py-4 px-6 bg-[#00001c] text-sidebar-foreground shadow w-full"
+  style={{ borderBottom: "1px solid hsl(225, 50%, 25%)" }} // Dark purple color
+>
       <div className="flex items-center space-x-4 flex-1">
         <div className="sidebar-header">
           <h1 className="app-title">I-Send</h1>
