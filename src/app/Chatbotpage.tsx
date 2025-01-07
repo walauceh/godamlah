@@ -207,20 +207,18 @@ export default function ChatBotPage() {
 
 
 
-  // Modified handleSend function with better error handling
   const handleSend = async () => {
     if (!input.trim()) {
       setError("Input cannot be empty");
       return;
     }
-    setError(null); // Clear any previous error
+  
+    setError(null); 
     setIsTyping(true);
-
+  
     try {
-      // Add user input to the messages
       setMessages((prev) => [...prev, `User: ${input}`]);
-
-      // Call the API
+  
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: {
@@ -228,21 +226,33 @@ export default function ChatBotPage() {
         },
         body: JSON.stringify({ prompt: input }),
       });
-
+  
       if (!res.ok) {
-        throw new Error("Failed to fetch response from chatbot.");
+        throw new Error(`API request failed with status: ${res.status}`);
       }
-
-      const data = await res.json();
-
-      // Add bot response to the messages
-      getBotResponse(data.text || "No response received");
+  
+      try {
+        const data = await res.json(); 
+  
+        if (!data || !data.text) {
+          getBotResponse("No response received from chatbot."); 
+          return; 
+        }
+  
+        getBotResponse(data.text); 
+  
+      } catch (jsonErr) {
+        console.error("Error parsing JSON response:", jsonErr);
+        setError("Invalid response from chatbot.");
+        return; 
+      }
+  
     } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Please try again.");
+      console.error("Error:", err);
+      setError("An error occurred while communicating with the chatbot."); 
     } finally {
       setIsTyping(false);
-      setInput(""); // Clear input field
+      setInput(""); 
     }
   };
   

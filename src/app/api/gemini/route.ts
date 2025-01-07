@@ -11,11 +11,13 @@ export async function POST(req: Request) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt);
 
-    console.log("Generated Response:", result.response.text);
-    return NextResponse.json({ text: result.response.text });
+    // Attempt to invoke the text function
+    const textResponse = result.response.text(); 
+
+    console.log("Generated Response:", textResponse);
+    return NextResponse.json({ text: textResponse });
   } catch (error) {
     console.error("API Route Error:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }
-
