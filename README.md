@@ -7,8 +7,7 @@ Welcome to the README file of the GitHub repository of I-SEND. Our platform aims
 
 The smart contract was deployed and coded using Remix Ide but the full source code is attached here as well: `src/contracts/SecureFileStorage.sol`
 
-### Deployed Web App on Vercel
-**Check out our website by clicking this [link](https://i-send-godamlah.vercel.app/)**
+
 
 ### Run Development Server
 Alternatively, use the terminal to run the development server to check out our website!
