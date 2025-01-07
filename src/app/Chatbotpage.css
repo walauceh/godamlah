@@ -892,3 +892,24 @@
   font-weight: bold;
 }
 
+.message {
+  margin-bottom: 10px;
+  max-width: 70%;
+}
+
+.user {
+  background-color: #DCF8C6;
+  align-self: flex-end;
+}
+
+.bot {
+  background-color: #F1F0F0;
+  align-self: flex-start;
+}
+
+.message-content pre {
+  white-space: pre-wrap; /* Allows wrapping of long lines */
+  word-wrap: break-word; /* Breaks words if necessary */
+  margin: 0; /* Remove margins to fit inside the bubble */
+  font-family: 'Courier New', Courier, monospace;
+}

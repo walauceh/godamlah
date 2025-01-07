@@ -15,6 +15,7 @@ import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/
 import { useNavigation } from '@/components/NavigationContext';
 import { NavigationProvider } from '@/components/NavigationContext';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { introduceChatbot } from '@/utils/chatbot-utils';
 
 // Content components for each section
 const InboxContent = () => {
@@ -186,10 +187,8 @@ export const ContentSection = () => {
   );
 };
 
-
-
 export default function ChatBotPage() {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
   const [input, setInput] = useState('');
   const [selectedSection, setSelectedSection] = useState("Inbox");
   const [isTyping, setIsTyping] = useState(false);
@@ -205,8 +204,6 @@ export default function ChatBotPage() {
   const [userAddress, setUserAddress] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-
-
   const handleSend = async () => {
     if (!input.trim()) {
       setError("Input cannot be empty");
@@ -216,9 +213,19 @@ export default function ChatBotPage() {
     setError(null); 
     setIsTyping(true);
   
-    try {
-      setMessages((prev) => [...prev, `User: ${input}`]);
+    // Always keep the user input in the messages as an object
+    setMessages((prev) => [...prev, { sender: "User", message: input }]);
   
+    // Check if the user input is a greeting or an introduction request
+    if (input.toLowerCase().includes("hello") || input.toLowerCase().includes("hi") || input.toLowerCase().includes("introduce yourself")) {
+      const introMessage = introduceChatbot();  // Call the function to get the introduction message
+      setMessages((prev) => [...prev, { sender: "I-Send", message: introMessage }]);  // Set the message as an object
+      setIsTyping(false);
+      setInput("");
+      return;
+    }
+  
+    try {
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: {
@@ -232,34 +239,36 @@ export default function ChatBotPage() {
       }
   
       try {
-        const data = await res.json(); 
+        const data = await res.json();
   
         if (!data || !data.text) {
-          getBotResponse("No response received from chatbot."); 
-          return; 
+          getBotResponse("No response received from chatbot.");
+          return;
         }
   
-        getBotResponse(data.text); 
+        // Keep the bot's response as an object
+        getBotResponse(data.text);
   
       } catch (jsonErr) {
         console.error("Error parsing JSON response:", jsonErr);
         setError("Invalid response from chatbot.");
-        return; 
+        return;
       }
   
     } catch (err) {
       console.error("Error:", err);
-      setError("An error occurred while communicating with the chatbot."); 
+      setError("An error occurred while communicating with the chatbot.");
     } finally {
       setIsTyping(false);
-      setInput(""); 
+      setInput("");
     }
   };
   
-
+  // Function to handle bot responses
   const getBotResponse = (response: string) => {
-    setMessages((prev) => [...prev, `Bot: ${response}`]);
+    setMessages((prev) => [...prev, { sender: "I-Send", message: response }]);
   };
+  
   
   
 
@@ -484,27 +493,36 @@ export default function ChatBotPage() {
                   </div>
                   )}
                   <div className="messages">
-                      {messages.length === 0 ? (
-                        <div className="empty-messages">
-                          {/* <p>No messages yet. Start the conversation!</p> */}
+                    {messages.length === 0 ? (
+                      <div className="empty-messages">
+                        {/* <p>No messages yet. Start the conversation!</p> */}
+                      </div>
+                    ) : (
+                      messages.map((msg, idx) => (
+                        <div key={idx} className={`message ${msg.sender === "User" ? "user" : "bot"}`}>
+                          {msg.sender === "I-Send" ? (
+                            // For Bot messages, render formatted HTML content (if any formatting is present)
+                            <div className="message-content">
+                              <pre>{msg.message}</pre> {/* Using <pre> tag to preserve formatting */}
+                            </div>
+                          ) : (
+                            // Regular user message (no HTML formatting needed)
+                            <p>{msg.message}</p>
+                          )}
                         </div>
-                      ) : (
-                        messages.map((msg, idx) => (
-                          <div key={idx} className={`message ${msg.startsWith("Bot:") ? "bot" : "user"}`}>
-                            {msg}
-                          </div>
-                        ))
-                      )}
-                      {isTyping && (
-                        <div className="message bot typing-bubble">
-                          <div className="typing-indicator">
-                            <span className="dot"></span>
-                            <span className="dot"></span>
-                            <span className="dot"></span>
-                          </div>
+                      ))
+                    )}
+                    {isTyping && (
+                      <div className="message bot typing-bubble">
+                        <div className="typing-indicator">
+                          <span className="dot"></span>
+                          <span className="dot"></span>
+                          <span className="dot"></span>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                  </div>
+
 
                   <div className="input-container">
                     <textarea
