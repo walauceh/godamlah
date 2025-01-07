@@ -3,17 +3,18 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PageHeader } from "@/components/page-header";
-import { JSX, useEffect, useRef, useState } from "react";
+import { JSX, useEffect, useMemo, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Chatbotpage.css";
 import React from "react";
 import ReactModal from "react-modal";
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import openai, { OpenAI } from "openai";
 import { encryptCID, decryptCID } from "../utils/encryption";
 import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/contract";
 import { useNavigation } from '@/components/NavigationContext';
 import { NavigationProvider } from '@/components/NavigationContext';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Content components for each section
 const InboxContent = () => {
@@ -185,12 +186,14 @@ export const ContentSection = () => {
   );
 };
 
+
+
 export default function ChatBotPage() {
-  const [messages, setMessages] = useState<{ sender: "user" | "bot"; text: string }[]>([]);
-  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [input, setInput] = useState('');
   const [selectedSection, setSelectedSection] = useState("Inbox");
   const [isTyping, setIsTyping] = useState(false);
-  const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
+  const [cooldown, setCooldown] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
@@ -200,16 +203,55 @@ export default function ChatBotPage() {
   const [modalPurpose, setModalPurpose] = useState<"grant" | "revoke" | "retrieve" | null>(null);
   const [blockId, setBlockId] = useState<number | null>(null);
   const [userAddress, setUserAddress] = useState<string>("");
-  const geminiAPI = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const [loading, setLoading] = useState(false);
 
-  if (!geminiAPI) {
-    throw new Error("Gemini API key not found. Please set the GEMINI_API_KEY environment variable.");
-  }
 
-  useEffect(() => {
-    const ai = new GoogleGenerativeAI(geminiAPI);
-    setGenAI(ai);
-  }, []);
+
+  // Modified handleSend function with better error handling
+  const handleSend = async () => {
+    if (!input.trim()) {
+      setError("Input cannot be empty");
+      return;
+    }
+    setError(null); // Clear any previous error
+    setIsTyping(true);
+
+    try {
+      // Add user input to the messages
+      setMessages((prev) => [...prev, `User: ${input}`]);
+
+      // Call the API
+      const res = await fetch("/api/gemini", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch response from chatbot.");
+      }
+
+      const data = await res.json();
+
+      // Add bot response to the messages
+      getBotResponse(data.text || "No response received");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsTyping(false);
+      setInput(""); // Clear input field
+    }
+  };
+  
+
+  const getBotResponse = (response: string) => {
+    setMessages((prev) => [...prev, `Bot: ${response}`]);
+  };
+  
+  
 
   const openModal = (purpose: "grant" | "revoke" | "retrieve") => {
     setModalPurpose(purpose);
@@ -222,44 +264,8 @@ export default function ChatBotPage() {
     setUserAddress("");
   };
 
-  const handleSend = async () => {
-    if (input.trim()) {
-      const userMessage = { sender: "user" as const, text: input };
-      setMessages((prev) => [...prev, userMessage]);
 
-      setIsTyping(true);
-
-      try {
-        const botMessage = {
-          sender: "bot" as const,
-          text: await getBotResponse(input),
-        };
-
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        console.error("Error getting response:", error);
-        setMessages((prev) => [...prev, { sender: "bot", text: "Something went wrong. Please try again." }]);
-      } finally {
-        setIsTyping(false);
-        setInput("");
-      }
-    }
-  };
-
-  const getBotResponse = async (message: string): Promise<string> => {
-    if (!genAI) return "Loading...";
-
-    try {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const result = await model.generateContent(message);
-      const response = result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
-      return response || "I'm sorry, I don't understand.";
-    } catch (error) {
-      console.error("Error generating response:", error);
-      return "Something went wrong. Please try again.";
-    }
-  };
-
+  
   const handleVoiceInput = () => {
     const recognition = new (window.SpeechRecognition || (window as any).webkitSpeechRecognition)();
     recognition.lang = "en-US";
@@ -286,11 +292,12 @@ export default function ChatBotPage() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent newline
+      handleSend(); // Trigger message send
     }
   };
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -307,7 +314,6 @@ export default function ChatBotPage() {
 
     setIsUploading(true);
     setError(null);
-    setUploadedFileUrl(null);
 
     try {
       const formData = new FormData();
@@ -340,8 +346,6 @@ export default function ChatBotPage() {
       await storeMetadata(blockId, encryptedCID);
 
       console.log('Encrypted CID stored on blockchain with blockId:', blockId);
-
-      setUploadedFileUrl(data.url);
       console.log('File uploaded successfully');
 
       toast.success(
@@ -361,6 +365,7 @@ export default function ChatBotPage() {
       setIsUploading(false);
     }
   };
+
 
   const handleRetrieveMetadata = async (blockId: number) => {
     try {
@@ -469,28 +474,27 @@ export default function ChatBotPage() {
                   </div>
                   )}
                   <div className="messages">
-                    {messages.length === 0 ? (
-                      <div className="empty-messages">
-                        {/* You can leave this empty or customize it further */}
-                      </div>
-                    ) : (
-                      messages.map((msg, idx) => (
-                        <div key={idx} className={`message ${msg.sender}`}>
-                          {msg.text}
+                      {messages.length === 0 ? (
+                        <div className="empty-messages">
+                          {/* <p>No messages yet. Start the conversation!</p> */}
                         </div>
-                      ))
-                    )}
-                    {isTyping && (
-                      <div className="message bot typing-bubble">
-                        <div className="typing-indicator">
-                          <div className="dot"></div>
-                          <div className="dot"></div>
-                          <div className="dot"></div>
+                      ) : (
+                        messages.map((msg, idx) => (
+                          <div key={idx} className={`message ${msg.startsWith("Bot:") ? "bot" : "user"}`}>
+                            {msg}
+                          </div>
+                        ))
+                      )}
+                      {isTyping && (
+                        <div className="message bot typing-bubble">
+                          <div className="typing-indicator">
+                            <span className="dot"></span>
+                            <span className="dot"></span>
+                            <span className="dot"></span>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-
+                      )}
+                    </div>
 
                   <div className="input-container">
                     <textarea
