@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 body {
+  background-color: #00001c;
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Existing styles for dark and default theme */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -24,7 +26,8 @@ body {
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
+    /* this is the sidebar side border color */
+    --border: 225 50% 25%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --chart-1: 12 76% 61%;
@@ -33,6 +36,17 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    /* this is the entire sidebar color */
+    --sidebar-background: 240 100% 5.5%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 210 100% 30%;
+    --sidebar-primary-foreground:  0 0% 98%;
+    /* this is the sidebar menu item color when hovering*/
+    --sidebar-accent: 210 100% 30%; 
+    /* this is the sidebar menu item font color tgt with icons color */
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 210 100% 30%;
+    --sidebar-ring: 210 100% 30%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -59,7 +73,43 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --sidebar-background: 0, 0, 28; 
+    --sidebar-foreground: 0% 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 98%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
+}
+
+/* Default sidebar styles */
+.sidebar-menu-item {
+  margin-top: 10px;
+  border-radius: var(--radius);
+  transition: background-color 0.3s ease;
+}
+
+
+
+/* Minimal Scrollbar Styling for Webkit Browsers */
+::-webkit-scrollbar {
+  width: 5px; /* Very thin scrollbar */
+  height: 5px; /* Thin horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2); /* Subtle thumb color (dark grey with transparency) */
+  border-radius: 10px; /* Smooth, rounded edges */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4); /* Slightly darker on hover */
 }
 
 @layer base {

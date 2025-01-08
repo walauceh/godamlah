@@ -13,30 +13,15 @@
 }
 
 
-
 /* General Chat App Styling */
 .chat-app {
   display: flex;
   height: 100vh;
-  background-color: #1a1a1a;
-  color: #fff;
 }
 
-/* Sidebar Styling */
-.sidebar {
-  position: relative;
-  width: 240px;
-  background-color: #1a1a1a;
-  border-right: 1px solid #333;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
 
 .sidebar-header {
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .app-title {
@@ -49,7 +34,6 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   margin: 0;
-  margin-bottom: 20px;
 }
 
 
@@ -125,29 +109,17 @@
   font-size: 12px;
 }
 
-/* Inbox and Chat Container */
-.inbox-and-chat-container {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  height: 100vh;
-  margin-left: 30px;
-}
-
-
 
 /* Content Section */
 .content-section {
   width: 350px;
-  max-height: 600px;
-  background-color: #121212;
+  max-height: 650px;
+  background-color: #00001c;
   color: #fff;
   padding: 10px;
   overflow-y: auto;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(2, 3, 66, 0.298);
 }
 
 /* Inbox Content */
@@ -157,7 +129,7 @@
 }
 
 .email-item {
-  background-color: #1f1f1f;
+  background-color: #00001c;
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 8px;
@@ -272,7 +244,7 @@
 }
 
 .btn {
-  background-color: #4d4d4d;
+  background-color: #00001c;
   color: #fff;
   border: none;
   padding: 8px 12px;
@@ -303,7 +275,7 @@
 }
 
 .inbox-item {
-  background-color: #222;
+  background-color: #00001c;
   padding: 16px;
   border-radius: 4px;
   margin-bottom: 16px;
@@ -335,7 +307,7 @@
 }
 
 .inbox-item-tag {
-  background-color: #4d4d4d;
+  background-color: #00001c;
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -350,18 +322,18 @@
 /* Chat Container */
 .chat-container {
   flex: 1;
-  max-width: 800px;
-  min-width: 800px;
+  max-width: 1250px;
+  min-width: 765px;
   padding: 20px;
   border-left: 1px solid #333;
   box-sizing: border-box;
-  height: 100vh;
+  height: 85vh;
   display: flex;
   flex-direction: column;
 }
 
 .chat-header {
-  background-color: #222;
+  background-color: #00001c;
   padding: 12px 20px;
   font-size: 18px;
   font-weight: bold;
@@ -374,13 +346,9 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+    
 }
 
-.message {
-  max-width: 60%;
-  padding: 12px 16px;
-  border-radius: 16px;
-}
 
 .message.user {
   align-self: flex-end;
@@ -394,61 +362,88 @@
   color: #fff;
 }
 
-.instructions {
-  text-align: center;
-  color: lightgray;
-  margin-top: 1%;
-}
 
-.instructions ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.instructions li {
-  margin: 5px 0;
-}
 
 /* Buttons Section */
 .buttons-container {
+  margin-left: 30px;
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 10px; /* Adjust this value to reduce the space between the buttons */
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.buttons-container i {
+  transition: transform 0.3s ease;
+}
+
+.buttons-container i:hover {
+  transform: scale(1.2);
 }
 
 .action-button {
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #444;
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 4px;
+  background: none;
+  border: none;
+  padding: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.action-button:hover {
-  background-color: #555;
+
+/* Add this in your CSS file */
+.action-button i {
+  background-image: linear-gradient(40deg, #b27deb, #015eff);
+  -webkit-background-clip: text;
+  color: transparent;
 }
+
+
+.action-button:focus {
+  outline: none;
+}
+
+/* Lighter gray text for span */
+.action-button span {
+  color: #9a9999; /* Light gray color */
+  transition: color 0.3s ease; /* Optional smooth transition */
+}
+
+.action-button:hover span {
+  color: #b0b0b0; /* Slightly darker gray on hover for better visibility */
+}
+
+.buttons-container button {
+  padding: 8px; /* You can adjust padding to make buttons smaller or larger */
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: transform 0.3s ease; /* Add a nice hover effect */
+}
+
+.buttons-container button:hover {
+  transform: scale(1.1); /* Add a slight hover effect to make it interactive */
+}
+
 
 /* Input Area */
 .input-container {
   display: flex;
   align-items: center;
-  background-color: #222;
-  padding: 12px 20px;
+  background-color: #00001c;
+  padding: 12px 5px;
   border-top: 1px solid #333;
+  /* margin-right: 10px; */
 }
 
 .Textarea {
   flex-grow: 1;
-  background-color: #1a1a1a;
+  background-color: #00001c;
   color: #fff;
   border: 1px solid #333;
   padding: 10px;
   border-radius: 5px;
   font-size: 14px;
   resize: none;
+  margin-right: 10px;
 }
 
 .Textarea::placeholder {
@@ -507,7 +502,7 @@
   width: 50px; /* Same size for all profile pictures */
   height: 50px;
   border-radius: 50%;
-  background-color: #333;
+  background-color: #00001c;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -521,14 +516,14 @@
   padding: 15px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #00001c;
 }
 
 .account-dropdown .avatar-large {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #333;
+  background-color: #00001c;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -657,7 +652,7 @@
 
 /* Inbox Section */
 .inbox-section {
-  background-color: #121212;
+  background-color: #00001c;
   color: #fff;
   border-radius: 8px;
   padding: 10px;
@@ -687,7 +682,7 @@
   width: 200px;
   border-radius: 5px;
   border: none;
-  background-color: #333;
+  background-color: #e60000;
   color: #fff;
   font-size: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -704,7 +699,7 @@
 }
 
 .email-item {
-  background-color: #1f1f1f;
+  background-color: #e60000;
   margin-bottom: 15px;
   padding: 15px;
   border-radius: 8px;
@@ -749,7 +744,7 @@
   display: inline-block;
   padding: 5px 10px;
   font-size: 0.85rem;
-  background-color: #444;
+  background-color: #e60000;
   color: white;
   border-radius: 15px;
   margin-right: 5px;
@@ -860,5 +855,36 @@
 }
 
 
+.chat-header-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 3.5rem;
+  font-weight: bold;
+}
 
+.message {
+  margin-bottom: 10px;
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 16px;
+}
+
+.user {
+  background-color: #DCF8C6;
+  align-self: flex-end;
+}
+
+
+
+.bot .message-content pre {
+  text-align: left; /* Aligns the text inside the bot message to the left */
+  margin: 0; /* Removes default margin of <pre> */
+  white-space: pre-wrap; /* Ensures text wraps if it exceeds the width */
+  word-wrap: break-word; /* Allows long words to break */
+  font-family: inherit; /* Matches the font with the rest of the UI */
+  font-size: inherit; /* Matches the font size */
+  line-height: 1.5; /* Improves readability */
+}
 
