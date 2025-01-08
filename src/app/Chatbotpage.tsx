@@ -499,14 +499,17 @@ export default function ChatBotPage() {
                       </div>
                     ) : (
                       messages.map((msg, idx) => (
-                        <div key={idx} className={`message ${msg.sender === "User" ? "user" : "bot"}`}>
+                        <div
+                          key={idx}
+                          className={`message ${msg.sender === "User" ? "user" : "bot"}`}
+                        >
                           {msg.sender === "I-Send" ? (
-                            // For Bot messages, render formatted HTML content (if any formatting is present)
+                            // Bot messages with left-aligned text
                             <div className="message-content">
-                              <pre>{msg.message}</pre> {/* Using <pre> tag to preserve formatting */}
+                              <pre>{msg.message}</pre>
                             </div>
                           ) : (
-                            // Regular user message (no HTML formatting needed)
+                            // User messages (no special formatting needed)
                             <p>{msg.message}</p>
                           )}
                         </div>
@@ -522,7 +525,6 @@ export default function ChatBotPage() {
                       </div>
                     )}
                   </div>
-
 
                   <div className="input-container">
                     <textarea

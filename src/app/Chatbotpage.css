@@ -357,13 +357,9 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+    
 }
 
-.message {
-  max-width: 60%;
-  padding: 12px 16px;
-  border-radius: 16px;
-}
 
 .message.user {
   align-self: flex-end;
@@ -377,20 +373,7 @@
   color: #fff;
 }
 
-.instructions {
-  text-align: center;
-  color: lightgray;
-  margin-top: 1%;
-}
 
-.instructions ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.instructions li {
-  margin: 5px 0;
-}
 
 /* Buttons Section */
 .buttons-container {
@@ -895,6 +878,8 @@
 .message {
   margin-bottom: 10px;
   max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 16px;
 }
 
 .user {
@@ -902,14 +887,15 @@
   align-self: flex-end;
 }
 
-.bot {
-  background-color: #F1F0F0;
-  align-self: flex-start;
+
+
+.bot .message-content pre {
+  text-align: left; /* Aligns the text inside the bot message to the left */
+  margin: 0; /* Removes default margin of <pre> */
+  white-space: pre-wrap; /* Ensures text wraps if it exceeds the width */
+  word-wrap: break-word; /* Allows long words to break */
+  font-family: inherit; /* Matches the font with the rest of the UI */
+  font-size: inherit; /* Matches the font size */
+  line-height: 1.5; /* Improves readability */
 }
 
-.message-content pre {
-  white-space: pre-wrap; /* Allows wrapping of long lines */
-  word-wrap: break-word; /* Breaks words if necessary */
-  margin: 0; /* Remove margins to fit inside the bubble */
-  font-family: 'Courier New', Courier, monospace;
-}
