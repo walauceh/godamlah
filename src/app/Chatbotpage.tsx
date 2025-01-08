@@ -9,14 +9,11 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Chatbotpage.css";
 import React from "react";
 import ReactModal from "react-modal";
-import openai, { OpenAI } from "openai";
 import { encryptCID, decryptCID } from "../utils/encryption";
 import { storeMetadata, getMetadata, grantAccess, revokeAccess } from "../utils/contract";
 import { useNavigation } from '@/components/NavigationContext';
 import { NavigationProvider } from '@/components/NavigationContext';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { introduceChatbot } from '@/utils/chatbot-utils';
-import { Search } from "lucide-react";
 import { Dialog,
   DialogContent,
   DialogOverlay,
@@ -548,19 +545,19 @@ export const ContentSection = () => {
 export default function ChatBotPage() {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
   const [input, setInput] = useState('');
-  const [selectedSection, setSelectedSection] = useState("Inbox");
+
   const [isTyping, setIsTyping] = useState(false);
-  const [cooldown, setCooldown] = useState(false);
+
   const [isListening, setIsListening] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
+  // const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPurpose, setModalPurpose] = useState<"grant" | "revoke" | "retrieve" | null>(null);
   const [blockId, setBlockId] = useState<number | null>(null);
   const [userAddress, setUserAddress] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+
 
   const handleSend = async () => {
     if (!input.trim()) {
@@ -779,7 +776,7 @@ export default function ChatBotPage() {
   };  
 
   const [gradientAngle, setGradientAngle] = useState(50);
-  const [showLogin, setShowLogin] = useState(false);
+  // const [showLogin, setShowLogin] = useState(false);
   // Add HTMLParagraphElement type to the ref
   const titleRef = useRef<HTMLParagraphElement | null>(null);
 

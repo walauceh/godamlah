@@ -12,9 +12,6 @@ export function PageHeader() {
     transition: 'background 0.3s ease'
   };
 
-  const hoverStyle: React.CSSProperties = {
-    background: 'linear-gradient(to right, #a855f7, #3b82f6) border-box'
-  };
 
   const connectWallet = async () => {
     if (walletAddress) {
