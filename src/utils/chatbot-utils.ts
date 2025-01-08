@@ -1,21 +1,6 @@
 // chatbot-utils.ts
-export const sendMessageToChatbot = async (input: string) => {
-    try {
-      const res = await fetch("/api/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input }),
-      });
-  
-      if (!res.ok) {
-        throw new Error(`API request failed with status: ${res.status}`);
-      }
-  
-      const data = await res.json();
-      return data.text;
-    } catch (error) {
-      throw new Error("Error sending message to chatbot");
-    }
+export const sendMessageTo = async (input: string) => {
+
   };
   
   export const scheduleMessage = async (message: string, time: string) => {

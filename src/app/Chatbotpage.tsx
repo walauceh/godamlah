@@ -16,9 +16,290 @@ import { useNavigation } from '@/components/NavigationContext';
 import { NavigationProvider } from '@/components/NavigationContext';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { introduceChatbot } from '@/utils/chatbot-utils';
+import { Search } from "lucide-react";
+import { Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle, } from "@radix-ui/react-dialog";
 
-// Content components for each section
-const InboxContent = () => {
+
+  interface TimelineEvent {
+    date: string;
+    title: string;
+    description: string;
+    type: 'APP-IDEAS' | 'BLOG' | 'TWITTER' | 'MEDIUM';
+    link?: string;
+  }
+  
+  interface Email {
+    sender: string;
+    subject: string;
+    preview: string;
+    time: string;
+    tags: string[];
+    timeline?: TimelineEvent[];
+  }
+  
+  const TimelineItem = ({ event, isLeft }: { event: TimelineEvent; isLeft: boolean }) => {
+    const getTypeStyles = (type: TimelineEvent['type']) => {
+      const styles = {
+        'APP-IDEAS': 'bg-yellow-500',
+        'BLOG': 'bg-rose-500',
+        'TWITTER': 'bg-blue-500',
+        'MEDIUM': 'bg-emerald-600',
+      };
+      return styles[type] || 'bg-gray-500';
+    };
+  
+    return (
+      <div className={`flex items-start mb-8 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}>
+        <div className="flex-1 max-w-sm">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <span className="text-sm text-gray-500 block mb-2">{event.date}</span>
+            <h4 className="font-semibold text-lg text-gray-800 mb-1">{event.title}</h4>
+            <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+            {event.link && (
+              <a href={event.link} className="text-sm text-blue-600 hover:underline">
+                Check it out →
+              </a>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col items-center mx-4">
+          <div className={`w-8 h-8 rounded-full ${getTypeStyles(event.type)} flex items-center justify-center`}>
+            <span className="text-white text-xs">{event.type.charAt(0)}</span>
+          </div>
+          <div className="w-px h-24 bg-gray-300"></div>
+        </div>
+      </div>
+    );
+  };
+  
+  
+  const InboxContent = () => {
+    const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  
+    const inboxData: Email[] = [
+      {
+        sender: "William Smith",
+        subject: "Meeting Tomorrow",
+        preview: "Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the project details and have some ideas I'd like to share. It's crucial that we...",
+        time: "about 1 year ago",
+        tags: ["meeting", "work", "important"],
+        timeline: [
+          {
+            date: "Jan 15, 2024",
+            title: "Initial Draft",
+            description: "Created first version of the project proposal",
+            type: "APP-IDEAS"
+          },
+          {
+            date: "Jan 20, 2024",
+            title: "Team Review",
+            description: "Gathered feedback from the development team",
+            type: "MEDIUM"
+          },
+          {
+            date: "Jan 25, 2024",
+            title: "Final Updates",
+            description: "Incorporated all feedback and finalized the proposal",
+            type: "BLOG",
+            link: "https://example.com/proposal"
+          }
+        ]
+      },
+      {
+        sender: "Alice Smith",
+        subject: "Re: Project Update",
+        preview: "Thank you for the project update. It looks great! I've gone through the report, and the progress is impressive. The team has done a fantastic job, and I...",
+        time: "about 1 year ago",
+        tags: ["work", "important"]
+      },
+      {
+        sender: "Bob Johnson",
+        subject: "Weekend Plans",
+        preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
+        time: "over 1 year ago",
+        tags: ["personal"]
+      },
+      {
+        sender: "Emily Davis",
+        subject: "Re: Question about Budget",
+        preview: "I have a question about the budget for the upcoming project. It seems like there's a discrepancy in the allocation of resources. I've reviewed the...",
+        time: "almost 2 years ago",
+        tags: ["work", "budget"]
+      },
+      {
+        sender: "Michael Wilson",
+        subject: "Important Announcement",
+        preview: "I have an important announcement to make during our team meeting. It pertains to a strategic shift in our upcoming product launc...",
+        time: "almost 2 years ago",
+        tags: ["work", "announcement"]
+      }
+    ];
+  
+    return (
+      <>
+        <div className="flex-1 overflow-y-auto">
+          {inboxData.map((email, index) => (
+            <div
+              key={index}
+              className="p-4 border-b border-gray-800 hover:bg-gray-900/50 cursor-pointer"
+              onClick={() => setSelectedEmail(email)}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-white">{email.sender}</span>
+                </div>
+                <span className="text-sm text-gray-500">{email.time}</span>
+              </div>
+              <h3 className="font-medium text-white mb-2">{email.subject}</h3>
+              <p className="text-sm text-gray-400 mb-3">{email.preview}</p>
+              <div className="flex gap-2">
+                {email.tags.map((tag, tagIndex) => (
+                  <span
+                    key={tagIndex}
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      tag === 'work' ? 'text-white' : 'text-gray-300'
+                    }`}
+                    style={{ backgroundColor: tag === 'work' ? 'hsl(225, 50%, 25%)' : '#1f2937' }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+  
+        {selectedEmail && (
+        <Dialog open={!!selectedEmail} onOpenChange={() => setSelectedEmail(null)}>
+          <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+          <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg z-50">
+            <div className="p-6">
+              <DialogTitle className="text-xl font-semibold mb-4">Version History</DialogTitle>
+              <div className="bg-gray-50 rounded-md space-y-8 p-4">
+                {selectedEmail?.timeline?.map((event, index) => (
+                  <TimelineItem key={index} event={event} isLeft={index % 2 === 0} />
+                ))}
+                {(!selectedEmail?.timeline || selectedEmail.timeline.length === 0) && (
+                  <p className="text-gray-500 text-center py-4">No version history available</p>
+                )}
+              </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+)}
+      </>
+    );
+  };
+  
+const SentContent = () => {
+  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  
+  const inboxData: Email[] = [
+    {
+      sender: "Miley Johnson",
+      subject: "Meeting Tomorrow",
+      preview: "Hi, let's have a meeting tomorrow to discuss the project. I've been reviewing the project details and have some ideas I'd like to share. It's crucial that we...",
+      time: "about 1 year ago",
+      tags: ["meeting", "work", "important"],
+      timeline: [
+        {
+          date: "Jan 15, 2024",
+          title: "Initial Draft",
+          description: "Created first version of the project proposal",
+          type: "APP-IDEAS"
+        },
+        {
+          date: "Jan 20, 2024",
+          title: "Team Review",
+          description: "Gathered feedback from the development team",
+          type: "MEDIUM"
+        },
+        {
+          date: "Jan 25, 2024",
+          title: "Final Updates",
+          description: "Incorporated all feedback and finalized the proposal",
+          type: "BLOG",
+          link: "https://example.com/proposal"
+        }
+      ]
+    },
+    {
+      sender: "Alice Cyrus",
+      subject: "Re: Offer Letter Request",
+      preview: "Thank you for the offer letter update. Thank you for replying...",
+      time: "about 1 month ago",
+      tags: ["work", "important"]
+    },
+    {
+      sender: "Ariana Doe",
+      subject: "Weekend Funs",
+      preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
+      time: "over 1 year ago",
+      tags: ["personal"]
+    },
+    
+  ];
+
+  return (
+    <>
+      <div className="flex-1 overflow-y-auto">
+        {inboxData.map((email, index) => (
+          <div
+            key={index}
+            className="p-4 border-b border-gray-800 hover:bg-gray-900/50 cursor-pointer"
+            onClick={() => setSelectedEmail(email)}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-white">{email.sender}</span>
+              </div>
+              <span className="text-sm text-gray-500">{email.time}</span>
+            </div>
+            <h3 className="font-medium text-white mb-2">{email.subject}</h3>
+            <p className="text-sm text-gray-400 mb-3">{email.preview}</p>
+            <div className="flex gap-2">
+              {email.tags.map((tag, tagIndex) => (
+                <span
+                  key={tagIndex}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    tag === 'work' ? 'text-white' : 'text-gray-300'
+                  }`}
+                  style={{ backgroundColor: tag === 'work' ? 'hsl(225, 50%, 25%)' : '#1f2937' }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {selectedEmail && (
+      <Dialog open={!!selectedEmail} onOpenChange={() => setSelectedEmail(null)}>
+        <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+        <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-lg z-50">
+          <div className="p-6">
+            <DialogTitle className="text-xl font-semibold mb-4">Version History</DialogTitle>
+            <div className="bg-gray-50 rounded-md space-y-8 p-4">
+              {selectedEmail?.timeline?.map((event, index) => (
+                <TimelineItem key={index} event={event} isLeft={index % 2 === 0} />
+              ))}
+              {(!selectedEmail?.timeline || selectedEmail.timeline.length === 0) && (
+                <p className="text-gray-500 text-center py-4">No version history available</p>
+              )}
+            </div>
+    </div>
+  </DialogContent>
+</Dialog>
+)}
+    </>
+  );
+};
+
+const ScheduleContent = () => {
   const inboxData = [
     {
       sender: "William Smith",
@@ -28,35 +309,12 @@ const InboxContent = () => {
       tags: ["meeting", "work", "important"]
     },
     {
-      sender: "Alice Smith",
-      subject: "Re: Project Update",
-      preview: "Thank you for the project update. It looks great! I've gone through the report, and the progress is impressive. The team has done a fantastic job, and I...",
-      time: "about 1 year ago",
-      tags: ["work", "important"]
-    },
-    {
       sender: "Bob Johnson",
       subject: "Weekend Plans",
       preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
       time: "over 1 year ago",
       tags: ["personal"]
     },
-    {
-      sender: "Emily Davis",
-      online: true,
-      subject: "Re: Question about Budget",
-      preview: "I have a question about the budget for the upcoming project. It seems like there's a discrepancy in the allocation of resources. I've reviewed the...",
-      time: "almost 2 years ago",
-      tags: ["work", "budget"]
-    },
-    {
-      sender: "Michael Wilson",
-      online: true,
-      subject: "Important Announcement",
-      preview: "I have an important announcement to make during our team meeting. It pertains to a strategic shift in our upcoming product launc...",
-      time: "almost 2 years ago",
-      tags: ["work", "announcement"]
-    }
   ];
 
   return (
@@ -89,33 +347,133 @@ const InboxContent = () => {
   );
 };
 
-const SentContent = () => (
-  <div className="p-4">
-    <h2 className="text-xl font-bold text-white mb-4">Sent Messages</h2>
-    <div className="text-gray-300">Your sent messages will appear here...</div>
-  </div>
-);
+const ArchiveContent = () => {
+  const inboxData = [
+    {
+      sender: "Bob Johnson",
+      subject: "Weekend Plans",
+      preview: "Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It's been a while since we had some outdoor fun. If you're...",
+      time: "over 1 year ago",
+      tags: ["personal"]
+    },
+  ];
 
-const ScheduleContent = () => (
-  <div className="p-4">
-    <h2 className="text-xl font-bold text-white mb-4">Schedule</h2>
-    <div className="text-gray-300">Your calendar and scheduled events will appear here...</div>
-  </div>
-);
+  return (
+    <div className="flex-1 overflow-y-auto">
+      {inboxData.map((email, index) => (
+        <div key={index} className="p-4 border-b border-gray-800 hover:bg-gray-900/50 cursor-pointer">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-white">{email.sender}</span>
+            
+            </div>
+            <span className="text-sm text-gray-500">{email.time}</span>
+          </div>
+          <h3 className="font-medium text-white mb-2">{email.subject}</h3>
+          <p className="text-sm text-gray-400 mb-3">{email.preview}</p>
+          <div className="flex gap-2">
+            {email.tags.map((tag, tagIndex) => (
+              <span 
+                key={tagIndex}
+                className={`px-3 py-1 rounded-full text-sm ${tag === 'work' ? 'text-white' : 'text-gray-300'}`}
+                style={{ backgroundColor: tag === 'work' ? 'hsl(225, 50%, 25%)' : '#1f2937' }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
-const ArchiveContent = () => (
-  <div className="p-4">
-    <h2 className="text-xl font-bold text-white mb-4">Archive</h2>
-    <div className="text-gray-300">Your archived messages will appear here...</div>
-  </div>
-);
+interface Connection {
+  name: string;
+  title: string;
+  image: string;
+  connectedTime: string;
+  isOnline: boolean;
+}
 
-const SocialContent = () => (
-  <div className="p-4">
-    <h2 className="text-xl font-bold text-white mb-4">Social</h2>
-    <div className="text-gray-300">Your social messages will appear here...</div>
-  </div>
-);
+const SocialContent = () => {
+  const connections: Connection[] = [
+    {
+      name: "Senuka Karunaratne",
+      title: "--",
+      image: "/api/placeholder/48/48",
+      connectedTime: "Connected 1 day ago",
+      isOnline: true
+    },
+    {
+      name: "Tracy Lee",
+      title: "Engineering & IT Recruitment Consultant | Recruitment Consultant @ Hunters International | Talent Detective | Opportunity Matchmaker | Career Alchemist",
+      image: "/api/placeholder/48/48",
+      connectedTime: "Connected 3 days ago",
+      isOnline: true
+    },
+    {
+      name: "Keevan Brayden Louis",
+      title: "2nd Year Digital Business Student @ APU | Verified Tutor at Superprof ID | PPI Malaysia",
+      image: "/api/placeholder/48/48",
+      connectedTime: "Connected 1 week ago",
+      isOnline: true
+    },
+    {
+      name: "Yaashwin Sarawanan",
+      title: "Founder @ The Mind Xpert Enterprise | Abacus & Mental Arithmetic",
+      image: "/api/placeholder/48/48",
+      connectedTime: "Connected 1 week ago",
+      isOnline: true
+    },
+    {
+      name: "Mostafa Ahmed",
+      title: "Final Year Software Engineering Student at Asia Pacific University of Technology and Innovation (APU / APIIT)",
+      image: "/api/placeholder/48/48",
+      connectedTime: "Connected 1 week ago",
+      isOnline: true
+    }
+  ];
+
+  return (
+    <div className="max-w-4xl mx-auto rounded-lg" style={{ backgroundColor: 'hsl(252, 100.00%, 9.60%)' }}>
+      <div className="divide-y divide-gray-700">
+        {connections.map((connection, index) => (
+          <div key={index} className="p-4 flex items-start justify-between hover:bg-gray-700/50">
+            <div className="flex items-start gap-3">
+              <div className="relative">
+                <img
+                  src={connection.image}
+                  alt={connection.name}
+                  className="w-12 h-12 rounded-full"
+                />
+                {connection.isOnline && (
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[hsl(252, 100.00%, 9.60%)]" />
+                )}
+              </div>
+              <div>
+                <h3 className="font-semibold text-white">{connection.name}</h3>
+                <p className="text-gray-300 text-sm line-clamp-2">{connection.title}</p>
+                <p className="text-gray-400 text-sm mt-1">{connection.connectedTime}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="px-4 py-1 border border-gray-600 rounded-full text-gray-300 hover:bg-gray-700/50 font-medium">
+                Message
+              </button>
+              <button className="p-2 hover:bg-gray-700/50 rounded-full">
+                <span className="block w-1 h-1 bg-gray-400 rounded-full mb-1"></span>
+                <span className="block w-1 h-1 bg-gray-400 rounded-full mb-1"></span>
+                <span className="block w-1 h-1 bg-gray-400 rounded-full"></span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 export const ContentSection = () => {
   const { currentSection } = useNavigation();

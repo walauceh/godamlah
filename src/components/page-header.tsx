@@ -1,11 +1,10 @@
-"use client";
-
 import React, { useState } from "react";
 import { LoginForm } from "@/components/login-form";
 import { Search } from "lucide-react";
 
 export function PageHeader() {
   const [showLogin, setShowLogin] = useState(false);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   const buttonStyle: React.CSSProperties = {
     background: 'linear-gradient(#00001c, #00001c) padding-box, linear-gradient(to right, #a855f7, #3b82f6) border-box',
@@ -17,11 +16,29 @@ export function PageHeader() {
     background: 'linear-gradient(to right, #a855f7, #3b82f6) border-box'
   };
 
+  const connectWallet = async () => {
+    if (walletAddress) {
+      // Disconnect the wallet by clearing the wallet address
+      setWalletAddress(null);
+    } else if (window.ethereum) {
+      try {
+        // Request access to user's MetaMask accounts
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // Set the first account as the connected wallet address
+        setWalletAddress(accounts[0]);
+      } catch (error) {
+        console.error("Error connecting to MetaMask:", error);
+      }
+    } else {
+      alert("MetaMask is not installed. Please install it to connect your wallet.");
+    }
+  };
+
   return (
-    <header 
-  className="flex items-center justify-between py-4 px-6 bg-[#00001c] text-sidebar-foreground shadow w-full"
-  style={{ borderBottom: "1px solid hsl(225, 50%, 25%)" }} // Dark purple color
->
+    <header
+      className="flex items-center justify-between py-4 px-6 bg-[#00001c] text-sidebar-foreground shadow w-full"
+      style={{ borderBottom: "1px solid hsl(225, 50%, 25%)" }} // Dark purple color
+    >
       <div className="flex items-center space-x-4 flex-1">
         <div className="sidebar-header">
           <h1 className="app-title">I-Send</h1>
@@ -44,7 +61,7 @@ export function PageHeader() {
       </div>
 
       <div className="flex items-center space-x-4">
-        <button 
+        <button
           className="px-6 py-2 rounded-full text-white relative overflow-hidden group"
           style={buttonStyle}
           onMouseOver={(e) => {
@@ -58,11 +75,11 @@ export function PageHeader() {
         >
           Sign Up
         </button>
-        
-        <button 
+
+        <button
           className="px-6 py-2 rounded-full text-white relative overflow-hidden group"
           style={buttonStyle}
-          onClick={() => setShowLogin(true)}
+          onClick={connectWallet}
           onMouseOver={(e) => {
             const target = e.currentTarget;
             target.style.background = 'linear-gradient(to right,rgb(99, 25, 168),rgb(3, 69, 175)) border-box';
@@ -72,7 +89,7 @@ export function PageHeader() {
             target.style.background = 'linear-gradient(#00001c, #00001c) padding-box, linear-gradient(to right, #a855f7, #3b82f6) border-box';
           }}
         >
-          Log in
+          {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...` : "Connect Wallet"}
         </button>
       </div>
 
