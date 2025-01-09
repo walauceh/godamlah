@@ -842,10 +842,10 @@ export default function ChatBotPage() {
                   {/* Conditional header */}
                   {messages.length === 0 && (
                     <div className="chat-header-center">
-                    <p ref={titleRef} style={titleStyle}>
-                      What can I help with?
-                    </p>
-                  </div>
+                      <p ref={titleRef} style={titleStyle}>
+                        What can I help with?
+                      </p>
+                    </div>
                   )}
                   <div className="messages">
                     {messages.length === 0 ? (
@@ -859,12 +859,10 @@ export default function ChatBotPage() {
                           className={`message ${msg.sender === "User" ? "user" : "bot"}`}
                         >
                           {msg.sender === "I-Send" ? (
-                            // Bot messages with left-aligned text
                             <div className="message-content">
                               <pre>{msg.message}</pre>
                             </div>
                           ) : (
-                            // User messages (no special formatting needed)
                             <p>{msg.message}</p>
                           )}
                         </div>
@@ -880,7 +878,7 @@ export default function ChatBotPage() {
                       </div>
                     )}
                   </div>
-
+  
                   <div className="input-container">
                     <textarea
                       value={input}
@@ -891,29 +889,41 @@ export default function ChatBotPage() {
                     />
                     <button onClick={handleSend} className="send-button">Send</button>
                   </div>
-
+  
                   {/* Action Buttons Below Message Input */}
                   <div className="buttons-container flex gap-4 justify-center mt-4">
-                    {/* Choose File Button */}
-                    <div className="flex items-center gap-2">
-                      <label
-                        htmlFor="file-upload"
-                        className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
-                        title="Choose Files"
-                      >
-                        <i className="fas fa-upload text-2xl"></i>
-                        <span>Choose Files</span>
-                      </label>
-                      <input
-                        id="file-upload"
-                        type="file"
-                        onChange={handleFileChange}
-                        disabled={isUploading}
-                        className="hidden"
-                      />
-                    </div>
-
-                    {/* Upload Files Button */}
+                    {/* Action buttons remain the same */}
+                    {/* File Upload Container */}
+<div className="flex items-center gap-2 relative">
+  <div className="flex items-center gap-2">
+    <label
+      htmlFor="file-upload"
+      className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
+      title="Choose Files"
+    >
+      <i className="fas fa-upload text-2xl"></i>
+      <span>Choose Files</span>
+    </label>
+    <input
+      id="file-upload"
+      type="file"
+      onChange={handleFileChange}
+      disabled={isUploading}
+      className="hidden"
+    />
+  </div>
+  
+  {/* Filename Display - Absolutely positioned below */}
+  {file && (
+    <span 
+      className="absolute -bottom-6 left-0 text-xs text-gray-400 truncate max-w-[200px]" 
+      title={file.name}
+    >
+      {file.name}
+    </span>
+  )}
+</div>
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -925,8 +935,7 @@ export default function ChatBotPage() {
                         <span>Upload Files</span>
                       </button>
                     </div>
-
-                    {/* Access Files Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -937,8 +946,7 @@ export default function ChatBotPage() {
                         <span>Access Files</span>
                       </button>
                     </div>
-
-                    {/* Share Files Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -946,11 +954,9 @@ export default function ChatBotPage() {
                         title="Share Files"
                       >
                         <i className="fas fa-share-alt text-2xl"></i>
-                        {/* <span>Share</span> */}
                       </button>
                     </div>
-
-                    {/* Revoke Access Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -958,11 +964,9 @@ export default function ChatBotPage() {
                         title="Remove Access"
                       >
                         <i className="fas fa-times-circle text-2xl"></i>
-                        {/* <span>Remove Access</span> */}
                       </button>
                     </div>
-
-                    {/* Voice Input Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className={`action-button flex items-center gap-2 text-white text-xl ${isListening ? "animate-pulse" : ""}`}
@@ -970,7 +974,6 @@ export default function ChatBotPage() {
                         title={isListening ? "Listening..." : "Voice Input"}
                       >
                         <i className="fas fa-microphone"></i>
-                        {/* <span className="text-sm">Voice Input</span> */}
                       </button>
                     </div>
                   </div>
@@ -982,52 +985,80 @@ export default function ChatBotPage() {
       </SidebarProvider>
       </NavigationProvider>
   
-      {/* Modal */}
+      {/* Updated Modal */}
       <ReactModal
         isOpen={modalOpen}
         onRequestClose={closeModal}
         contentLabel="Input Details"
         ariaHideApp={false}
-        className="custom-modal"
+        className="fixed inset-0 flex items-center justify-center z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
-        <h2>{modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}</h2>
-        <div>
-          <label>
-            Block ID:
-            <input
-              type="number"
-              value={blockId || ""}
-              onChange={(e) => setBlockId(parseInt(e.target.value))}
-              required
-            />
-          </label>
-          {modalPurpose !== "retrieve" && (
-            <label>
-              User Address:
-              <input
-                type="text"
-                value={userAddress}
-                onChange={(e) => setUserAddress(e.target.value)}
-                required
-              />
-            </label>
-          )}
-          <div className="modal-buttons">
-            <button onClick={closeModal}>Cancel</button>
-            <button
-              onClick={async () => {
-                if (modalPurpose === "retrieve" && blockId !== null) {
-                  await handleRetrieveMetadata(blockId);
-                } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
-                  await handleGrantAccess(blockId, userAddress);
-                } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
-                  await handleRevokeAccess(blockId, userAddress);
-                }
-                closeModal();
-              }}
-            >
-              Submit
-            </button>
+        <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md relative">
+          {/* Close button */}
+          <button 
+            onClick={closeModal}
+            className="absolute right-4 top-4 text-gray-400 hover:text-white"
+          >
+            <i className="fas fa-times"></i>
+          </button>
+  
+          <h2 className="text-2xl font-semibold text-white mb-6">
+            {modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}
+          </h2>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-200">
+                Block ID:
+                <input
+                  type="number"
+                  value={blockId || ""}
+                  onChange={(e) => setBlockId(parseInt(e.target.value))}
+                  required
+                  className="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </label>
+            </div>
+  
+            {modalPurpose !== "retrieve" && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-200">
+                  User Address:
+                  <input
+                    type="text"
+                    value={userAddress}
+                    onChange={(e) => setUserAddress(e.target.value)}
+                    required
+                    className="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+              </div>
+            )}
+  
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-gray-700 rounded-md hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (modalPurpose === "retrieve" && blockId !== null) {
+                    await handleRetrieveMetadata(blockId);
+                  } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
+                    await handleGrantAccess(blockId, userAddress);
+                  } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
+                    await handleRevokeAccess(blockId, userAddress);
+                  }
+                  closeModal();
+                }}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         </div>
       </ReactModal>
