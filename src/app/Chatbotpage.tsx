@@ -3,7 +3,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PageHeader } from "@/components/page-header";
-import { JSX, useEffect, useMemo, useRef, useState } from "react";
+import { JSX, useEffect, useMemo, useRef, useState, useCallback, createContext, useContext } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Chatbotpage.css";
@@ -18,7 +18,6 @@ import { Dialog,
   DialogContent,
   DialogOverlay,
   DialogTitle, } from "@radix-ui/react-dialog";
-
 
   interface TimelineEvent {
     date: string;
@@ -36,6 +35,17 @@ import { Dialog,
     tags: string[];
     timeline?: TimelineEvent[];
   }
+
+  interface FileData {
+    fileName: string;
+    blockId: number;
+    uploadDate: string;
+  }
+  
+  const FileContext = createContext<{
+    files: FileData[];
+    addFile: (file: FileData) => void;
+  } | undefined>(undefined);
   
   const TimelineItem = ({ event, isLeft }: { event: TimelineEvent; isLeft: boolean }) => {
     const getTypeStyles = (type: TimelineEvent['type']) => {
@@ -471,6 +481,57 @@ const SocialContent = () => {
   );
 };
 
+const MyFilesContent = () => {
+  const fileContext = useContext(FileContext);
+  if (!fileContext) return null;
+
+  const { files } = fileContext;
+
+  return (
+    <div className="p-6">
+      <div className="bg-gray-900 rounded-lg shadow overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-800">
+          <thead className="bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                File Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                Block ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                Upload Date
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-gray-900 divide-y divide-gray-800">
+            {files.map((file, index) => (
+              <tr key={index} className="hover:bg-gray-800/50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {file.fileName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {file.blockId}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {file.uploadDate}
+                </td>
+              </tr>
+            ))}
+            {files.length === 0 && (
+              <tr>
+                <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
+                  No files uploaded yet
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 
 export const ContentSection = () => {
   const { currentSection } = useNavigation();
@@ -487,6 +548,8 @@ export const ContentSection = () => {
         return <ArchiveContent />;
       case 'social':
         return <SocialContent />;
+      case 'my-Files':
+        return <MyFilesContent />;
       default:
         return <InboxContent />;
     }
@@ -557,6 +620,11 @@ export default function ChatBotPage() {
   const [modalPurpose, setModalPurpose] = useState<"grant" | "revoke" | "retrieve" | null>(null);
   const [blockId, setBlockId] = useState<number | null>(null);
   const [userAddress, setUserAddress] = useState<string>("");
+  const [files, setFiles] = useState<FileData[]>([]);
+
+  const addFile = useCallback((file: FileData) => {
+    setFiles(prev => [...prev, file]);
+  }, []);
 
 
   const handleSend = async () => {
@@ -704,7 +772,7 @@ export default function ChatBotPage() {
       }
 
       const data = await response.json();
-      const cid = data.cid; // CID from the file upload response
+      const cid = data.cid;
       const secretKey = process.env.NEXT_PUBLIC_RANDOM_UUID;
 
       if (!secretKey) {
@@ -712,17 +780,19 @@ export default function ChatBotPage() {
       }
 
       const encryptedCID = encryptCID(cid, secretKey);
-
-      console.log('Encrypted CID:', encryptedCID);
-
-      // Save encrypted CID to blockchain
-      const blockId = Date.now(); // Use a unique blockId (e.g., timestamp)
+      const blockId = Date.now(); // Use timestamp as blockId
+      
       await storeMetadata(blockId, encryptedCID);
       await grantAccess(blockId, userAddress);
 
-      console.log('Encrypted CID stored on blockchain with blockId:', blockId);
-      console.log('File uploaded successfully');
+      // Add the file to the files state
+      addFile({
+        fileName: file.name,
+        blockId: blockId,
+        uploadDate: new Date().toLocaleDateString()
+      });
 
+      console.log('File uploaded successfully');
       toast.success(
         <div>
           File uploaded successfully!{" "}
@@ -738,6 +808,7 @@ export default function ChatBotPage() {
       toast.error("File upload failed.");
     } finally {
       setIsUploading(false);
+      setFile(null); // Reset file input
     }
   };
 
@@ -823,23 +894,24 @@ export default function ChatBotPage() {
 
   
   return (
-    <div className="chat-app bg-[#00001c]">
-      <NavigationProvider>
-      <SidebarProvider>
-        <AppSidebar />
-        <main className="w-full bg-[#00001c]">
-          <PageHeader />
-          <div className="content bg-[#00001c]">
-            {/* Main content container */}
-            <div className="flex w-full gap-4 px-4 pb-4 bg-[#00001c] h-[calc(100vh-4rem)]">
-              {/* Content Section */}
-              <div className="w-1/3 bg-[#00001c] h-full">
-                <ContentSection/>
-              </div>
-              
-              {/* Chat Container */}
-              <div className="w-2/3 bg-[#00001c] h-full">
-                <div className="chat-container h-full">
+    <FileContext.Provider value={{ files, addFile }}>
+      <div className="chat-app bg-[#00001c]">
+        <NavigationProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="w-full bg-[#00001c]">
+              <PageHeader />
+              <div className="content bg-[#00001c]">
+                {/* Main content container */}
+                <div className="flex w-full gap-4 px-4 pb-4 bg-[#00001c] h-[calc(100vh-4rem)]">
+                  {/* Content Section */}
+                  <div className="w-1/3 bg-[#00001c] h-full">
+                    <ContentSection/>
+                  </div>
+                  
+                  {/* Chat Container */}
+                  <div className="w-2/3 bg-[#00001c] h-full">
+                    <div className="chat-container h-full">
                   {/* Conditional header */}
                   {messages.length === 0 && (
                     <div className="chat-header-center">
@@ -1067,5 +1139,6 @@ export default function ChatBotPage() {
       {/* Toast Notifications */}
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
+    </FileContext.Provider>
   );
 }

@@ -17,7 +17,8 @@ const items = [
   { title: "Sent", icon: Send, id: 'sent' },
   { title: "Schedule", icon: Calendar, id: 'schedule' },
   { title: "Archive", icon: Box, id: 'archive' },
-  { title: "Social", icon: User, id: 'social' }
+  { title: "Social", icon: User, id: 'social' },
+  { title: "MyFiles", icon: Box, id: 'my-Files' }
 ];
 
 export function AppSidebar() {
