@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from 'next/font/google';
-
+import { ToastContainer } from "react-toastify";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -21,10 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${roboto.variable} antialiased`}
-      >
+      <head>
+        <link 
+          rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+        />
+      </head>
+      <body className={`${roboto.variable} antialiased`}>
         {children}
+        <ToastContainer position="top-right" />
       </body>
     </html>
   );

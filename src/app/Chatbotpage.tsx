@@ -781,9 +781,9 @@ export default function ChatBotPage() {
 
       const encryptedCID = encryptCID(cid, secretKey);
       const blockId = Date.now(); // Use timestamp as blockId
+      console.log('Block ID:', blockId);
       
       await storeMetadata(blockId, encryptedCID);
-      await grantAccess(blockId, userAddress);
 
       // Add the file to the files state
       addFile({
@@ -795,10 +795,13 @@ export default function ChatBotPage() {
       console.log('File uploaded successfully');
       toast.success(
         <div>
-          File uploaded successfully!{" "}
-          <a href={data.url} target="_blank" rel="noopener noreferrer">
+          File uploaded successfully!{' '}
+          <button
+            onClick={() => window.open(data.url, '_blank')}
+            className="text-blue-500 underline"
+          >
             Open File
-          </a>
+          </button>
         </div>
       );
 
@@ -817,14 +820,33 @@ export default function ChatBotPage() {
     try {
       const encryptedCID = await getMetadata(blockId);
       console.log('Encrypted CID from blockchain:', encryptedCID);
+
+      const secretKey = process.env.NEXT_PUBLIC_RANDOM_UUID;
+
+      if (!secretKey) {
+        throw new Error('Secret key not found');
+      }
   
-      const decryptedCID = decryptCID(encryptedCID, "your-secret-key");
+      const decryptedCID = decryptCID(encryptedCID, secretKey);
       console.log('Decrypted CID:', decryptedCID);
   
       const fileUrl = `https://w3s.link/ipfs/${decryptedCID}`;
       console.log('File URL:', fileUrl);
+      toast.success(
+        <div>
+          You have access to this file!{' '}
+          <button
+            onClick={() => window.open(fileUrl, '_blank')}
+            className="text-blue-500 underline"
+          >
+            Open File
+          </button>
+        </div>
+      );
+
     } catch (error) {
       console.error('Error retrieving metadata:', error);
+      toast.error("You do not have access to this file.");
       setError(error instanceof Error ? error.message : 'Access denied or invalid block ID');
     }
   };
@@ -833,8 +855,10 @@ export default function ChatBotPage() {
     try {
       await grantAccess(blockId, userAddress);
       console.log(`Access granted to ${userAddress} for blockId ${blockId}`);
+      toast.success("Access granted successfully.");
     } catch (error) {
       console.error('Error granting access:', error);
+      toast.error("Fail to grant access.");
     }
   };
   
@@ -842,8 +866,10 @@ export default function ChatBotPage() {
     try {
       await revokeAccess(blockId, userAddress);
       console.log(`Access revoked for ${userAddress} for blockId ${blockId}`);
+      toast.success("Access revoked successfully.");
     } catch (error) {
       console.error('Error revoking access:', error);
+      toast.error("Fail to revoke access.");
     }
   };  
 
@@ -967,35 +993,35 @@ export default function ChatBotPage() {
                   <div className="buttons-container flex gap-4 justify-center mt-4">
                     {/* Action buttons remain the same */}
                     {/* File Upload Container */}
-<div className="flex items-center gap-2 relative">
-  <div className="flex items-center gap-2">
-    <label
-      htmlFor="file-upload"
-      className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
-      title="Choose Files"
-    >
-      <i className="fas fa-upload text-2xl"></i>
-      <span>Choose Files</span>
-    </label>
-    <input
-      id="file-upload"
-      type="file"
-      onChange={handleFileChange}
-      disabled={isUploading}
-      className="hidden"
-    />
-  </div>
-  
-  {/* Filename Display - Absolutely positioned below */}
-  {file && (
-    <span 
-      className="absolute -bottom-6 left-0 text-xs text-gray-400 truncate max-w-[200px]" 
-      title={file.name}
-    >
-      {file.name}
-    </span>
-  )}
-</div>
+                    <div className="flex items-center gap-2 relative">
+                      <div className="flex items-center gap-2">
+                        <label
+                          htmlFor="file-upload"
+                          className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
+                          title="Choose Files"
+                        >
+                          <i className="fas fa-upload text-2xl"></i>
+                          <span>Choose Files</span>
+                        </label>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          onChange={handleFileChange}
+                          disabled={isUploading}
+                          className="hidden"
+                        />
+                      </div>
+                      
+                      {/* Filename Display - Absolutely positioned below */}
+                      {file && (
+                        <span 
+                          className="absolute -bottom-6 left-0 text-xs text-gray-400 truncate max-w-[200px]" 
+                          title={file.name}
+                        >
+                          {file.name}
+                        </span>
+                      )}
+                    </div>
   
                     <div className="flex items-center gap-2">
                       <button
