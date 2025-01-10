@@ -3,7 +3,7 @@ Welcome to the README file of the GitHub repository of I-SEND. Our platform aims
 
 ## Getting Started
 ### Deployed Smart Contract on Etherscan
-**Check out our smart contract on etherscan by clicking this [link](https://sepolia.etherscan.io/address/0xd92bf4306a78bce053f9a860d14766c3a9ee6151)**
+**Check out our smart contract on etherscan by clicking this [link](https://sepolia.etherscan.io/address/0x2b19769006a73e70a8592e20c6c7374a28da9b15)**
 
 The smart contract was deployed and coded using Remix Ide but the full source code is attached here as well: `src/contracts/SecureFileStorage.sol`
 
