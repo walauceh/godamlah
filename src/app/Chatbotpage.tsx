@@ -718,6 +718,7 @@ export default function ChatBotPage() {
       // Save encrypted CID to blockchain
       const blockId = Date.now(); // Use a unique blockId (e.g., timestamp)
       await storeMetadata(blockId, encryptedCID);
+      await grantAccess(blockId, userAddress);
 
       console.log('Encrypted CID stored on blockchain with blockId:', blockId);
       console.log('File uploaded successfully');

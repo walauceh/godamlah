@@ -3,17 +3,17 @@ import CONTRACT_ABI from "../contracts/SecureFileStorage.json";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
-const PRIVATE_RPC_URL = 'http://127.0.0.1:8545';
-const PRIVATE_NETWORK_CONFIG = {
-  chainId: '0x3039', // 12345 in hexadecimal
-  chainName: 'Private Ethereum Chain',
+const SEPOLIA_RPC_URL = 'https://sepolia.infura.io/v3/52a17c0ecc1c4ec7ba25cbd9a3a9a5ec';
+const SEPOLIA_NETWORK_CONFIG = {
+  chainId: '0xaa36a7', // 11155111 in hexadecimal
+  chainName: 'Sepolia Testnet',
   nativeCurrency: {
-    name: 'Private ETH',
+    name: 'Ethereum',
     symbol: 'ETH',
     decimals: 18
   },
-  rpcUrls: [PRIVATE_RPC_URL],
-  blockExplorerUrls: []
+  rpcUrls: [SEPOLIA_RPC_URL],
+  blockExplorerUrls: ['https://sepolia.etherscan.io']
 };
 
 export async function connectWallet(): Promise<BrowserProvider | null> {
@@ -28,7 +28,7 @@ export async function connectWallet(): Promise<BrowserProvider | null> {
         // Attempt to switch to Sepolia network
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: PRIVATE_NETWORK_CONFIG.chainId }],
+          params: [{ chainId: SEPOLIA_NETWORK_CONFIG.chainId }],
         });
       } catch (error) {
         console.error('Failed to switch network:', error);
