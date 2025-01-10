@@ -2,90 +2,128 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "blockId",
-				"type": "uint256"
+			"internalType": "uint256",
+			"name": "blockId",
+			"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
+			"internalType": "address",
+			"name": "user",
+			"type": "address"
 			}
 		],
 		"name": "grantAccess",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
+		},
+		{
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "blockId",
-				"type": "uint256"
+			"indexed": true,
+			"internalType": "uint256",
+			"name": "blockid",
+			"type": "uint256"
 			},
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
+			"indexed": true,
+			"internalType": "address",
+			"name": "user",
+			"type": "address"
+			}
+		],
+		"name": "GrantingAccess",
+		"type": "event"
+		},
+		{
+		"anonymous": false,
+		"inputs": [
+			{
+			"indexed": true,
+			"internalType": "uint256",
+			"name": "blockId",
+			"type": "uint256"
+			},
+			{
+			"indexed": true,
+			"internalType": "address",
+			"name": "owner",
+			"type": "address"
 			}
 		],
 		"name": "MetadataStored",
 		"type": "event"
-	},
-	{
+		},
+		{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "blockId",
-				"type": "uint256"
+			"internalType": "uint256",
+			"name": "blockId",
+			"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
+			"internalType": "address",
+			"name": "user",
+			"type": "address"
 			}
 		],
 		"name": "revokeAccess",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
+		},
+		{
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "blockId",
-				"type": "uint256"
+			"indexed": true,
+			"internalType": "uint256",
+			"name": "blockid",
+			"type": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "encryptedCID",
-				"type": "string"
+			"indexed": true,
+			"internalType": "address",
+			"name": "user",
+			"type": "address"
+			}
+		],
+		"name": "RevokingAccess",
+		"type": "event"
+		},
+		{
+		"inputs": [
+			{
+			"internalType": "uint256",
+			"name": "blockId",
+			"type": "uint256"
+			},
+			{
+			"internalType": "string",
+			"name": "encryptedCID",
+			"type": "string"
 			}
 		],
 		"name": "storeMetadata",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
+		},
+		{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "blockId",
-				"type": "uint256"
+			"internalType": "uint256",
+			"name": "blockId",
+			"type": "uint256"
 			}
 		],
 		"name": "getMetadata",
 		"outputs": [
 			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
+			"internalType": "string",
+			"name": "",
+			"type": "string"
 			}
 		],
 		"stateMutability": "view",

@@ -35,7 +35,7 @@ contract SecureFileStorage {
 
         metadataStore[blockId] = Metadata({
             encryptedCID: encryptedCID,
-            owner: address(this)
+            owner: msg.sender
         });
 
         emit MetadataStored(blockId, msg.sender);
