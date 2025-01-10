@@ -18,8 +18,8 @@ interface IVerifyRequest {
     signal?: string;
 }
 
-const app_id = "app_0e5d341b302d9411fc114e19d7dfb561";
-const action = "testing-action";
+const app_id = "app_staging_04ed24301846665ea24e095eeba0cb98";
+const action = "verifyuser";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {

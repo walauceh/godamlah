@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { LoginForm } from "@/components/login-form";
 import { Search } from "lucide-react";
 import { IDKitWidget, ISuccessResult, VerificationLevel } from '@worldcoin/idkit';
+import { WorldIDButton } from "./world-id";
 
 export function PageHeader() {
   const [showLogin, setShowLogin] = useState(false);
@@ -15,28 +16,28 @@ export function PageHeader() {
     transition: 'background 0.3s ease'
   };
 
-  const verifyProof = async (proof: ISuccessResult) => {
-    try {
-      const response = await fetch('/api/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(proof),
-      });
+  // const verifyProof = async (proof: ISuccessResult) => {
+  //   try {
+  //     const response = await fetch('/api/verify', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(proof),
+  //     });
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.success;
-      } else {
-        const errorData = await response.json();
-        throw new Error(`Error Code ${errorData.detail}`);
-      }
-    } catch (error) {
-      console.error('Verification error:', error);
-      return false;
-    }
-  };
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       return result.success;
+  //     } else {
+  //       const errorData = await response.json();
+  //       throw new Error(`Error Code ${errorData.detail}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Verification error:', error);
+  //     return false;
+  //   }
+  // };
 
   const onSuccess = (result: ISuccessResult) => {
     window.alert(
@@ -107,7 +108,7 @@ export function PageHeader() {
           {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...` : "Connect Wallet"}
         </button>
 
-        <span className="inline-block">
+        {/* <div className="inline-block">
           <IDKitWidget
             app_id="app_staging_04ed24301846665ea24e095eeba0cb98"
             action="verifyuser"
@@ -116,26 +117,27 @@ export function PageHeader() {
             onSuccess={onSuccess}
           >
             {({ open }) => (
-              <span 
-                onClick={open}
-                className="inline-block"
-              >
+              <div className="inline-block">
                 <button
+                  onClick={open}
                   className="px-6 py-2 rounded-full text-white relative overflow-hidden group"
                   style={buttonStyle}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(to right, rgb(99, 25, 168), rgb(3, 69, 175)) border-box';
+                    const target = e.currentTarget;
+                    target.style.background = 'linear-gradient(to right,rgb(99, 25, 168),rgb(3, 69, 175)) border-box';
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(#00001c, #00001c) padding-box, linear-gradient(to right, #a855f7, #3b82f6) border-box';
+                    const target = e.currentTarget;
+                    target.style.background = 'linear-gradient(#00001c, #00001c) padding-box, linear-gradient(to right, #a855f7, #3b82f6) border-box';
                   }}
                 >
                   Verify with World ID
                 </button>
-              </span>
+              </div>
             )}
           </IDKitWidget>
-        </span>
+        </div> */}
+        <WorldIDButton onSuccess={onSuccess} />
       </div>
 
       {showLogin && (
