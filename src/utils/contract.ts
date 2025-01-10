@@ -30,22 +30,8 @@ export async function connectWallet(): Promise<BrowserProvider | null> {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: SEPOLIA_NETWORK_CONFIG.chainId }],
         });
-      } catch (switchError: any) {
-        // If network not added, add it
-        if (switchError.code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [SEPOLIA_NETWORK_CONFIG],
-            });
-          } catch (addError) {
-            console.error('Failed to add Sepolia network:', addError);
-            return null;
-          }
-        } else {
-          console.error('Failed to switch to Sepolia network:', switchError);
-          return null;
-        }
+      } catch (error) {
+        console.error('Failed to switch network:', error);
       }
 
       return provider;

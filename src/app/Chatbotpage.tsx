@@ -3,7 +3,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { PageHeader } from "@/components/page-header";
-import { JSX, useEffect, useMemo, useRef, useState } from "react";
+import { JSX, useEffect, useMemo, useRef, useState, useCallback, createContext, useContext } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Chatbotpage.css";
@@ -18,7 +18,6 @@ import { Dialog,
   DialogContent,
   DialogOverlay,
   DialogTitle, } from "@radix-ui/react-dialog";
-
 
   interface TimelineEvent {
     date: string;
@@ -36,6 +35,17 @@ import { Dialog,
     tags: string[];
     timeline?: TimelineEvent[];
   }
+
+  interface FileData {
+    fileName: string;
+    blockId: number;
+    uploadDate: string;
+  }
+  
+  const FileContext = createContext<{
+    files: FileData[];
+    addFile: (file: FileData) => void;
+  } | undefined>(undefined);
   
   const TimelineItem = ({ event, isLeft }: { event: TimelineEvent; isLeft: boolean }) => {
     const getTypeStyles = (type: TimelineEvent['type']) => {
@@ -471,6 +481,57 @@ const SocialContent = () => {
   );
 };
 
+const MyFilesContent = () => {
+  const fileContext = useContext(FileContext);
+  if (!fileContext) return null;
+
+  const { files } = fileContext;
+
+  return (
+    <div className="p-6">
+      <div className="bg-gray-900 rounded-lg shadow overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-800">
+          <thead className="bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                File Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                Block ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                Upload Date
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-gray-900 divide-y divide-gray-800">
+            {files.map((file, index) => (
+              <tr key={index} className="hover:bg-gray-800/50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {file.fileName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {file.blockId}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  {file.uploadDate}
+                </td>
+              </tr>
+            ))}
+            {files.length === 0 && (
+              <tr>
+                <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
+                  No files uploaded yet
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 
 export const ContentSection = () => {
   const { currentSection } = useNavigation();
@@ -487,6 +548,8 @@ export const ContentSection = () => {
         return <ArchiveContent />;
       case 'social':
         return <SocialContent />;
+      case 'my-Files':
+        return <MyFilesContent />;
       default:
         return <InboxContent />;
     }
@@ -557,6 +620,11 @@ export default function ChatBotPage() {
   const [modalPurpose, setModalPurpose] = useState<"grant" | "revoke" | "retrieve" | null>(null);
   const [blockId, setBlockId] = useState<number | null>(null);
   const [userAddress, setUserAddress] = useState<string>("");
+  const [files, setFiles] = useState<FileData[]>([]);
+
+  const addFile = useCallback((file: FileData) => {
+    setFiles(prev => [...prev, file]);
+  }, []);
 
 
   const handleSend = async () => {
@@ -704,7 +772,7 @@ export default function ChatBotPage() {
       }
 
       const data = await response.json();
-      const cid = data.cid; // CID from the file upload response
+      const cid = data.cid;
       const secretKey = process.env.NEXT_PUBLIC_RANDOM_UUID;
 
       if (!secretKey) {
@@ -712,16 +780,19 @@ export default function ChatBotPage() {
       }
 
       const encryptedCID = encryptCID(cid, secretKey);
-
-      console.log('Encrypted CID:', encryptedCID);
-
-      // Save encrypted CID to blockchain
-      const blockId = Date.now(); // Use a unique blockId (e.g., timestamp)
+      const blockId = Date.now(); // Use timestamp as blockId
+      
       await storeMetadata(blockId, encryptedCID);
+      await grantAccess(blockId, userAddress);
 
-      console.log('Encrypted CID stored on blockchain with blockId:', blockId);
+      // Add the file to the files state
+      addFile({
+        fileName: file.name,
+        blockId: blockId,
+        uploadDate: new Date().toLocaleDateString()
+      });
+
       console.log('File uploaded successfully');
-
       toast.success(
         <div>
           File uploaded successfully!{" "}
@@ -737,6 +808,7 @@ export default function ChatBotPage() {
       toast.error("File upload failed.");
     } finally {
       setIsUploading(false);
+      setFile(null); // Reset file input
     }
   };
 
@@ -822,30 +894,31 @@ export default function ChatBotPage() {
 
   
   return (
-    <div className="chat-app bg-[#00001c]">
-      <NavigationProvider>
-      <SidebarProvider>
-        <AppSidebar />
-        <main className="w-full bg-[#00001c]">
-          <PageHeader />
-          <div className="content bg-[#00001c]">
-            {/* Main content container */}
-            <div className="flex w-full gap-4 px-4 pb-4 bg-[#00001c] h-[calc(100vh-4rem)]">
-              {/* Content Section */}
-              <div className="w-1/3 bg-[#00001c] h-full">
-                <ContentSection/>
-              </div>
-              
-              {/* Chat Container */}
-              <div className="w-2/3 bg-[#00001c] h-full">
-                <div className="chat-container h-full">
+    <FileContext.Provider value={{ files, addFile }}>
+      <div className="chat-app bg-[#00001c]">
+        <NavigationProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="w-full bg-[#00001c]">
+              <PageHeader />
+              <div className="content bg-[#00001c]">
+                {/* Main content container */}
+                <div className="flex w-full gap-4 px-4 pb-4 bg-[#00001c] h-[calc(100vh-4rem)]">
+                  {/* Content Section */}
+                  <div className="w-1/3 bg-[#00001c] h-full">
+                    <ContentSection/>
+                  </div>
+                  
+                  {/* Chat Container */}
+                  <div className="w-2/3 bg-[#00001c] h-full">
+                    <div className="chat-container h-full">
                   {/* Conditional header */}
                   {messages.length === 0 && (
                     <div className="chat-header-center">
-                    <p ref={titleRef} style={titleStyle}>
-                      What can I help with?
-                    </p>
-                  </div>
+                      <p ref={titleRef} style={titleStyle}>
+                        What can I help with?
+                      </p>
+                    </div>
                   )}
                   <div className="messages">
                     {messages.length === 0 ? (
@@ -859,12 +932,10 @@ export default function ChatBotPage() {
                           className={`message ${msg.sender === "User" ? "user" : "bot"}`}
                         >
                           {msg.sender === "I-Send" ? (
-                            // Bot messages with left-aligned text
                             <div className="message-content">
                               <pre>{msg.message}</pre>
                             </div>
                           ) : (
-                            // User messages (no special formatting needed)
                             <p>{msg.message}</p>
                           )}
                         </div>
@@ -880,7 +951,7 @@ export default function ChatBotPage() {
                       </div>
                     )}
                   </div>
-
+  
                   <div className="input-container">
                     <textarea
                       value={input}
@@ -891,29 +962,41 @@ export default function ChatBotPage() {
                     />
                     <button onClick={handleSend} className="send-button">Send</button>
                   </div>
-
+  
                   {/* Action Buttons Below Message Input */}
                   <div className="buttons-container flex gap-4 justify-center mt-4">
-                    {/* Choose File Button */}
-                    <div className="flex items-center gap-2">
-                      <label
-                        htmlFor="file-upload"
-                        className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
-                        title="Choose Files"
-                      >
-                        <i className="fas fa-upload text-2xl"></i>
-                        <span>Choose Files</span>
-                      </label>
-                      <input
-                        id="file-upload"
-                        type="file"
-                        onChange={handleFileChange}
-                        disabled={isUploading}
-                        className="hidden"
-                      />
-                    </div>
-
-                    {/* Upload Files Button */}
+                    {/* Action buttons remain the same */}
+                    {/* File Upload Container */}
+<div className="flex items-center gap-2 relative">
+  <div className="flex items-center gap-2">
+    <label
+      htmlFor="file-upload"
+      className="action-button flex items-center gap-2 text-white text-sm cursor-pointer"
+      title="Choose Files"
+    >
+      <i className="fas fa-upload text-2xl"></i>
+      <span>Choose Files</span>
+    </label>
+    <input
+      id="file-upload"
+      type="file"
+      onChange={handleFileChange}
+      disabled={isUploading}
+      className="hidden"
+    />
+  </div>
+  
+  {/* Filename Display - Absolutely positioned below */}
+  {file && (
+    <span 
+      className="absolute -bottom-6 left-0 text-xs text-gray-400 truncate max-w-[200px]" 
+      title={file.name}
+    >
+      {file.name}
+    </span>
+  )}
+</div>
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -925,8 +1008,7 @@ export default function ChatBotPage() {
                         <span>Upload Files</span>
                       </button>
                     </div>
-
-                    {/* Access Files Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -937,8 +1019,7 @@ export default function ChatBotPage() {
                         <span>Access Files</span>
                       </button>
                     </div>
-
-                    {/* Share Files Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -946,11 +1027,9 @@ export default function ChatBotPage() {
                         title="Share Files"
                       >
                         <i className="fas fa-share-alt text-2xl"></i>
-                        {/* <span>Share</span> */}
                       </button>
                     </div>
-
-                    {/* Revoke Access Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className="action-button flex items-center gap-2 text-white text-sm"
@@ -958,11 +1037,9 @@ export default function ChatBotPage() {
                         title="Remove Access"
                       >
                         <i className="fas fa-times-circle text-2xl"></i>
-                        {/* <span>Remove Access</span> */}
                       </button>
                     </div>
-
-                    {/* Voice Input Button */}
+  
                     <div className="flex items-center gap-2">
                       <button
                         className={`action-button flex items-center gap-2 text-white text-xl ${isListening ? "animate-pulse" : ""}`}
@@ -970,7 +1047,6 @@ export default function ChatBotPage() {
                         title={isListening ? "Listening..." : "Voice Input"}
                       >
                         <i className="fas fa-microphone"></i>
-                        {/* <span className="text-sm">Voice Input</span> */}
                       </button>
                     </div>
                   </div>
@@ -982,52 +1058,80 @@ export default function ChatBotPage() {
       </SidebarProvider>
       </NavigationProvider>
   
-      {/* Modal */}
+      {/* Updated Modal */}
       <ReactModal
         isOpen={modalOpen}
         onRequestClose={closeModal}
         contentLabel="Input Details"
         ariaHideApp={false}
-        className="custom-modal"
+        className="fixed inset-0 flex items-center justify-center z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
-        <h2>{modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}</h2>
-        <div>
-          <label>
-            Block ID:
-            <input
-              type="number"
-              value={blockId || ""}
-              onChange={(e) => setBlockId(parseInt(e.target.value))}
-              required
-            />
-          </label>
-          {modalPurpose !== "retrieve" && (
-            <label>
-              User Address:
-              <input
-                type="text"
-                value={userAddress}
-                onChange={(e) => setUserAddress(e.target.value)}
-                required
-              />
-            </label>
-          )}
-          <div className="modal-buttons">
-            <button onClick={closeModal}>Cancel</button>
-            <button
-              onClick={async () => {
-                if (modalPurpose === "retrieve" && blockId !== null) {
-                  await handleRetrieveMetadata(blockId);
-                } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
-                  await handleGrantAccess(blockId, userAddress);
-                } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
-                  await handleRevokeAccess(blockId, userAddress);
-                }
-                closeModal();
-              }}
-            >
-              Submit
-            </button>
+        <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md relative">
+          {/* Close button */}
+          <button 
+            onClick={closeModal}
+            className="absolute right-4 top-4 text-gray-400 hover:text-white"
+          >
+            <i className="fas fa-times"></i>
+          </button>
+  
+          <h2 className="text-2xl font-semibold text-white mb-6">
+            {modalPurpose === "retrieve" ? "Retrieve Metadata" : `${modalPurpose === "grant" ? "Grant" : "Revoke"} Access`}
+          </h2>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-200">
+                Block ID:
+                <input
+                  type="number"
+                  value={blockId || ""}
+                  onChange={(e) => setBlockId(parseInt(e.target.value))}
+                  required
+                  className="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </label>
+            </div>
+  
+            {modalPurpose !== "retrieve" && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-200">
+                  User Address:
+                  <input
+                    type="text"
+                    value={userAddress}
+                    onChange={(e) => setUserAddress(e.target.value)}
+                    required
+                    className="mt-1 w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </label>
+              </div>
+            )}
+  
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-gray-700 rounded-md hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (modalPurpose === "retrieve" && blockId !== null) {
+                    await handleRetrieveMetadata(blockId);
+                  } else if (modalPurpose === "grant" && blockId !== null && userAddress) {
+                    await handleGrantAccess(blockId, userAddress);
+                  } else if (modalPurpose === "revoke" && blockId !== null && userAddress) {
+                    await handleRevokeAccess(blockId, userAddress);
+                  }
+                  closeModal();
+                }}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         </div>
       </ReactModal>
@@ -1035,5 +1139,6 @@ export default function ChatBotPage() {
       {/* Toast Notifications */}
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
+    </FileContext.Provider>
   );
 }

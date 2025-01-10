@@ -3,7 +3,7 @@ interface Window {
     webkitSpeechRecognition: typeof SpeechRecognition;
     ethereum?: {
         isMetaMask?: boolean;
-        request: (args: { method: string; params?: any[] }) => Promise<any>;
+        request: (args: { method: string; params?: var[] }) => Promise<T>;
       };
 }
 interface SpeechRecognitionEvent extends Event {

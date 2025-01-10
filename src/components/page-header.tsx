@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 import { LoginForm } from "@/components/login-form";
 import { Search } from "lucide-react";
+import { ISuccessResult } from '@worldcoin/idkit';
+import { WorldIDButton } from "./world-id";
 
 export function PageHeader() {
   const [showLogin, setShowLogin] = useState(false);
@@ -12,6 +16,13 @@ export function PageHeader() {
     transition: 'background 0.3s ease'
   };
 
+  const onSuccess = (result: ISuccessResult) => {
+    window.alert(
+      `Successfully verified with World ID!
+      Your nullifier hash is: ${result.nullifier_hash}`
+    );
+    setShowLogin(true);
+  };
 
   const connectWallet = async () => {
     if (walletAddress) {
@@ -32,9 +43,9 @@ export function PageHeader() {
   };
 
   return (
-    <header
+    <header 
       className="flex items-center justify-between py-4 px-6 bg-[#00001c] text-sidebar-foreground shadow w-full"
-      style={{ borderBottom: "1px solid hsl(225, 50%, 25%)" }} // Dark purple color
+      style={{ borderBottom: "1px solid hsl(225, 50%, 25%)" }}
     >
       <div className="flex items-center space-x-4 flex-1">
         <div className="sidebar-header">
@@ -57,23 +68,8 @@ export function PageHeader() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
-        <button
-          className="px-6 py-2 rounded-full text-white relative overflow-hidden group"
-          style={buttonStyle}
-          onMouseOver={(e) => {
-            const target = e.currentTarget;
-            target.style.background = 'linear-gradient(to right,rgb(99, 25, 168),rgb(3, 69, 175))  border-box';
-          }}
-          onMouseOut={(e) => {
-            const target = e.currentTarget;
-            target.style.background = 'linear-gradient(#00001c, #00001c) padding-box, linear-gradient(to right, #a855f7, #3b82f6) border-box';
-          }}
-        >
-          Sign Up
-        </button>
-
-        <button
+        <div className="flex items-center space-x-4">
+          <button
           className="px-6 py-2 rounded-full text-white relative overflow-hidden group"
           style={buttonStyle}
           onClick={connectWallet}
@@ -88,6 +84,8 @@ export function PageHeader() {
         >
           {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...` : "Connect Wallet"}
         </button>
+
+        <WorldIDButton onSuccess={onSuccess} />
       </div>
 
       {showLogin && (

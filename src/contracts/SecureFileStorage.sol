@@ -16,6 +16,12 @@ contract SecureFileStorage {
 
     // Event to notify when metadata is stored
     event MetadataStored(uint256 indexed blockId, address indexed owner);
+
+    // Event to notify when access is granted to a new user
+    event GrantingAccess(uint indexed blockid, address indexed user);
+
+    // Event to notify when access is revoked from a user
+    event RevokingAccess(uint indexed blockid, address indexed user);
     
     // Modifier to restrict access
     modifier onlyOwner(uint256 blockId) {
@@ -38,11 +44,15 @@ contract SecureFileStorage {
     // Grant access to a user
     function grantAccess(uint256 blockId, address user) external onlyOwner(blockId) {
         accessList[blockId][user] = true;
+
+        emit GrantingAccess(blockId, user);
     }
 
     // Revoke access from a user
     function revokeAccess(uint256 blockId, address user) external onlyOwner(blockId) {
         accessList[blockId][user] = false;
+
+        emit RevokingAccess(blockId, user);
     }
 
     // Retrieve metadata (only for authorized users)
