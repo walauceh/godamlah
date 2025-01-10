@@ -109,8 +109,8 @@ export function PageHeader() {
 
         <span className="inline-block">
           <IDKitWidget
-            app_id="app_0e5d341b302d9411fc114e19d7dfb561"
-            action="data-user-1"
+            app_id="app_staging_04ed24301846665ea24e095eeba0cb98"
+            action="verifyuser"
             verification_level={VerificationLevel.Device}
             handleVerify={verifyProof}
             onSuccess={onSuccess}
