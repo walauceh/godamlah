@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LoginForm } from "@/components/login-form";
+
 import { Search } from "lucide-react";
 
 export function PageHeader() {
@@ -101,7 +101,7 @@ export function PageHeader() {
             </button>
             <div className="flex min-h-[300px] flex-col items-center justify-center bg-muted p-6 md:p-10">
               <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-                <LoginForm />
+                
               </div>
             </div>
           </div>
