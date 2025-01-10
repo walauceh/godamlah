@@ -107,7 +107,7 @@ export function PageHeader() {
           {walletAddress ? `Connected: ${walletAddress.slice(0, 6)}...` : "Connect Wallet"}
         </button>
 
-        <span className="inline-block">
+        {/* <span className="inline-block">
           <IDKitWidget
             app_id="app_staging_04ed24301846665ea24e095eeba0cb98"
             action="verifyuser"
@@ -135,7 +135,7 @@ export function PageHeader() {
               </span>
             )}
           </IDKitWidget>
-        </span>
+        </span> */}
       </div>
 
       {showLogin && (
